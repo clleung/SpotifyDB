@@ -1,0 +1,15 @@
+username,email,country,fname,lname,join_date,friend_username
+clleung,clleung@andrew.cmu.edu,USA,Lisa,Leung,2019-01-22,iya
+iya,iya@andrew.cmu.edu,USA,Isaac,Ahn,2018-09-24,abc
+abc,abc@andrew.cmu.edu,USA,abra,cadabra,2020-12-03,mfree
+mfree,mfree@andrew.cmu.edu,USA,Morgan,Freeman,2018-07-31,jgreen
+jgreen,jgreen@andrew.cmu.edu,USA,Jon,Greene,2010-04-24,dp
+dp,dp@andrew.cmu.edu,USA,David,Perrier,2016-08-10,mstar
+mstar,mstar@andrew.cmu.edu,USA,Matthew,Star,2019-03-23,clleung
+clleung,clleung@andrew.cmu.edu,USA,Lisa,Leung,2019-01-22,abc
+iya,iya@andrew.cmu.edu,USA,Isaac,Ahn,2018-09-24,mfree
+abc,abc@andrew.cmu.edu,USA,abra,cadabra,2020-12-03,jgreen
+mfree,mfree@andrew.cmu.edu,USA,Morgan,Freeman,2018-07-31,dp
+jgreen,jgreen@andrew.cmu.edu,USA,Jon,Greene,2010-04-24,mstar
+dp,dp@andrew.cmu.edu,USA,David,Perrier,2016-08-10,clleung
+mstar,mstar@andrew.cmu.edu,USA,Matthew,Star,2019-03-23,iya
