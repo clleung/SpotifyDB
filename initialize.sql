@@ -2,12 +2,12 @@
 -- Friends - Users - Messages 
 
 \c postgres
-DROP DATABASE IF EXISTS socnet;
+DROP DATABASE IF EXISTS spotifydb;
 
-CREATE database socnet;
-\c socnet
+CREATE database spotifydb;
+\c spotifydb;
 
-\i socnet_create.SQL
+\i create.SQL
 
 \copy Users(username, email, country, fname, lname, join_date, friend_username)     FROM 'Users.csv' csv header
 

@@ -1,5 +1,7 @@
 -- Created by Vertabelo (http://vertabelo.com)
 -- Last modification date: 2020-10-07 23:02:25.274
+DROP TABLE IF EXISTS Users CASCADE;
+
 
 CREATE TABLE Users (
     username text  NOT NULL,
@@ -12,6 +14,6 @@ CREATE TABLE Users (
     CONSTRAINT Users_pk PRIMARY KEY (username,friend_username)
 );
 
-
+\copy Users(username, email, country, fname, lname, join_date, friend_username)     FROM 'Users.csv' csv header
 -- End of file.
---Hi I found this
+
