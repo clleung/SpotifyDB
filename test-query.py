@@ -1,24 +1,42 @@
-#-----------------------------------------------------------------
-# Working with psycopg2
-#-----------------------------------------------------------------
-
-import psycopg2
-import sys
-
-def heading(str):
-    print('-'*60)
-    print("** %s:" % (str,))
-    print('-'*60, '\n')    
-
-SHOW_CMD = True
-def print_cmd(cmd):
-    if SHOW_CMD:
-        print(cmd.decode('utf-8'))
-
-def print_rows(rows):
-    for row in rows:
-        print(row)
     
+#-----------------------------------------------------------------
+# show_menu
+#-----------------------------------------------------------------
+
+def show_menu():
+    menu = '''
+
+--------------------------------------------------
+1. Show a Song
+2. Post a Song
+3. Add a Friend
+4. Show Messages
+
+Choose (1-4, 0 to quit): '''
+
+    try:
+        choice = int(input( menu ))
+    except ValueError:
+        print("\n\n* Invalid choice. Choose again.")
+        show_menu()
+    else:
+        if choice == 0:
+            print('Done.')
+            cur.close()
+            conn.close()
+        elif choice in range(1,1+7):
+            print()
+            actions[choice]()
+            show_menu()
+        else:
+            print("\n\n* Invalid choice (%s). Choose again." % choice)
+            show_menu()
+    finally:
+        if cur != None:
+            cur.close() 
+        if conn != None:
+            conn.close() 
+
 #-----------------------------------------------------------------
 # post_song
 #-----------------------------------------------------------------
@@ -59,12 +77,12 @@ def show_songs_menu():
 def show_songs(songname):
     tmpl = '''
         SELECT song_name, release_date, genre, num_plays, duration, artist_id
-          FROM songs as f
+          FROM Songs as f
           JOIN Users as s
             ON s.uid = f.uid_2
          WHERE f.uid_1 = %s
     '''
-    cmd = cur.mogrify(tmpl, (uid, ))
+    cmd = cur.mogrify(tmpl, (songname, ))
     print_cmd(cmd)
     cur.execute(cmd)
     rows = cur.fetchall()
@@ -123,15 +141,14 @@ def show_messages(uid):
 # We leverage the fact that in Python functions are first class
 # objects and build a dictionary of functions numerically indexed 
 
-actions = { 1:list_users_menu,    2:show_user_menu,   3:new_user_menu,
-            4:show_friends_menu,  5:add_friend_menu,
-            6:show_messages_menu, 7:post_message_menu }
+actions = { 1:show_songs_menu, 2:post_song,
+            3:add_friend_menu, 4:show_messages_menu }
 
 
 if __name__ == '__main__':
     try:
         # default database and user
-        db, user = 'socnet', 'isdb'
+        db, user = 'spotifydb', 'isdb'
         # you may have to adjust the user 
         # python a4-socnet-sraja.py a4_socnet postgres
         if len(sys.argv) >= 2:
