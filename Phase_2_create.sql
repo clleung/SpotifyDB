@@ -1,19 +1,7 @@
 -- Created by Vertabelo (http://vertabelo.com)
 -- Last modification date: 2020-12-11 05:36:44.496
+
 -- tables
-
-DROP TABLE IF EXISTS Ads CASCADE;
-DROP TABLE IF EXISTS Artist_Ads CASCADE;
-DROP TABLE IF EXISTS Artists CASCADE;
-DROP TABLE IF EXISTS External_Ads CASCADE;
-DROP TABLE IF EXISTS Friends CASCADE;
-DROP TABLE IF EXISTS Ranking CASCADE;
-DROP TABLE IF EXISTS Songs CASCADE;
-DROP TABLE IF EXISTS Sponsors CASCADE;
-DROP TABLE IF EXISTS Stream CASCADE;
-DROP TABLE IF EXISTS Users CASCADE;
-
-
 -- Table: Ads
 CREATE TABLE Ads (
     ad_id int  NOT NULL,
@@ -65,7 +53,7 @@ CREATE TABLE Songs (
     release_date date  NOT NULL,
     genre text  NOT NULL,
     num_plays int  NOT NULL,
-    duration time  NOT NULL,
+    length time  NOT NULL,
     artist_id int  NOT NULL,
     CONSTRAINT Songs_pk PRIMARY KEY (song_id)
 );
@@ -187,16 +175,4 @@ ALTER TABLE Stream ADD CONSTRAINT Stream_Users
 ;
 
 -- End of file.
-\copy Ads(ad_id, duration, frequency, information, cost, sponsor_id)     FROM 'Ads.csv' csv header
-\copy Artist_Ads(ad_id, artist_name)     FROM 'Artist_Ads.csv' csv header
-\copy Artists(artist_id, artist_name, monthly_listeners)     FROM 'Artists.csv' csv header
-\copy External_Ads(ad_if, client_name)     FROM 'External_Ads.csv' csv header
-\copy Friends(uid1, uid2, simultaneous_play)     FROM 'Friends.csv' csv header
-\copy Ranking(sponsor_id, ranking)     FROM 'Ranking.csv' csv header
-\copy Songs(song_id, song_name, release_date, genre, num_plays, duration, artist_id)     FROM 'Songs.csv' csv header
-\copy Sponsors(sponsor_id, sponsor_name)     FROM 'Sponsors.csv' csv header
-\copy Stream(uid, song_id, date, time)     FROM 'Stream.csv' csv header
-\copy Users(uid, username, email, country, fname, lname, join_date)     FROM 'Users.csv' csv header
--- End of file.
 
---Use SERIAL to allocate ids
