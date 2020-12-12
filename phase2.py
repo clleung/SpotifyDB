@@ -4,6 +4,9 @@
 
 import psycopg2
 import sys
+from prettytable import from_csv
+with open("Users.csv") as fp:
+    mytable = from_csv(fp)
 
 def heading(str):
     print('-'*60)
