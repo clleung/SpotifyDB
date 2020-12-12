@@ -5,6 +5,10 @@
 import psycopg2
 import sys
 
+from prettytable import from_csv
+with open("Ads.csv") as fp:
+    mytable = from_csv(fp)
+
 def heading(str):
     print('-'*60)
     print("** %s:" % (str,))
@@ -19,6 +23,10 @@ def print_rows(rows):
     for row in rows:
         print(row)
 
+x = mytable
+x.align = "r"
+print("Ads Table")
+print(x)
 #------------------------------------------------------------
 # show_menu
 #------------------------------------------------------------

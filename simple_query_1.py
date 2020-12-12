@@ -24,19 +24,13 @@ def print_rows(rows):
 
 def show_menu():
     menu = '''
-
+Simple Query 1:
+As an Artist, I want to post songs so that I can gain revenue and followers.
 --------------------------------------------------
-1. List users 
-2. Show user 
-3. New user 
----
-4. Show friends 
-5. Add friend 
----
-6. Show messages
-7. Post message
 
-Choose (1-7, 0 to quit): '''
+1. Add Song
+
+Select 1 to start, 0 to quit: '''
 
     try:
         choice = int(input( menu ))
@@ -48,7 +42,7 @@ Choose (1-7, 0 to quit): '''
             print('Done.')
             cur.close()
             conn.close()
-        elif choice in range(1,1+7):
+        elif choice == 1:
             print()
             actions[choice]()
             show_menu()
@@ -64,11 +58,6 @@ Choose (1-7, 0 to quit): '''
 #-----------------------------------------------------------------
 # print the PrettyTable
 #-----------------------------------------------------------------
-
-
-print("Simple Query 1:")
-print("This is user story 1:")
-print("As an Artist, I want to post songs so that I can gain revenue and followers.")
 print("Below is the Songs Table")
 
 x = mytable
@@ -99,98 +88,24 @@ def add_song(songname, release_date, genre, num_plays, duration, artist_id):
     cmd = cur.mogrify(tmpl, (songname, release_date, genre, num_plays, duration, artist_id))
     print_cmd(cmd)
     cur.execute(cmd)
-    show_songs(artist_name)
+    rows = cur.fetchall()
+    print_rows(rows)
+    print()
 
-songname = "Song Name: Vibes for Quarantine"
-release_date = "Release Date: 2020-04-04 "
-genre = "Genre: Chill"
-num_plays = "Number of Plays: 100000"
-duration = "Duration: 0:02:10"
-artist_name = "Artist Id: 2"
+print("Song Name: Vibes for Quarantine")
+print("Release Date: 2020-04-04")
+print("Genre: Chill")
+print("Number of Plays: 100000")
+print("Duration: 0:02:10")
+print("Artist Id: 2")
 
 add_song("Vibes for Quarantine", "2020-04-04", "Chill", "100000", "0:02:10", "2")
 x.align = "r"
 print("Songs Table")
 print(x)
 
-#-----------------------------------------------------------------
-# show_songs
-#-----------------------------------------------------------------
 
-def show_songs_menu():
-    heading("Show songs")    
-    songname = input("Song Name: ")
-    show_songs(songname)
-
-def show_songs(songname):
-    tmpl = '''
-        SELECT song_name, release_date, genre, num_plays, duration, artist_id
-          FROM Songs as f
-          JOIN Users as s
-            ON s.uid = f.uid_2
-         WHERE f.uid_1 = %s
-    '''
-    cmd = cur.mogrify(tmpl, (songname, ))
-    print_cmd(cmd)
-    cur.execute(cmd)
-    rows = cur.fetchall()
-    print_rows(rows)
-    print()
-
-#-----------------------------------------------------------------
-# add_friend
-#-----------------------------------------------------------------
-
-def add_friend_menu():
-    print("add_friend")
-    username = input("Username: ")
-    friend_username = input("Friend's Username: ")
-    add_friend(username, friend_username)
-
-def add_friend(username, friend_username):
-    tmpl = '''
-        INSERT INTO Users (username, friend_username) VALUES (%s, %s)
-    '''
-    cmd = cur.mogrify(tmpl, (username, friend_username))
-    print_cmd(cmd)
-    cur.execute(cmd)
-    cmd = cur.mogrify(tmpl, (friend_username, username))
-    print_cmd(cmd)
-    cur.execute(cmd)
-    show_friends(username)
-    show_friends(friend_username)
-    
-#-----------------------------------------------------------------
-# show messages
-#-----------------------------------------------------------------
-
-def show_messages_menu():
-    heading("show_messages")
-    uid = input("User id: ")
-    show_messages(uid)
-
-def show_messages(uid):
-    tmpl = '''
-        SELECT m.message
-          FROM Messages as m
-          JOIN Users as u
-            ON m.posted_by = u.uid
-         WHERE %s = m.posted_to
-    '''
-    cmd = cur.mogrify(tmpl, (uid, ))
-    print_cmd(cmd)
-    cur.execute(cmd)
-    rows = cur.fetchall()
-    print_rows(rows)
-    print()
-
-
-    
-# We leverage the fact that in Python functions are first class
-# objects and build a dictionary of functions numerically indexed 
-
-actions = { 1:show_songs_menu, 2:post_song,
-            3:add_friend_menu, 4:show_messages_menu }
+actions = { 1:add_song}
 
 
 if __name__ == '__main__':
