@@ -34,7 +34,7 @@ def show_menu():
 4. Show friends 
 5. Add friend 
 ---
-6. Show messages
+6. Make an Ad
 7. Post message
 
 Choose (1-7, 0 to quit): '''
@@ -98,7 +98,7 @@ def show_user(name):
         SELECT *
           FROM Users as u
          -- ILIKE is a case insensitive LIKE
-         WHERE (first_name ILIKE %s ) or (last_name ILIKE %s );
+         WHERE (username = %s );
     '''
     cmd = cur.mogrify(tmpl, ('%'+name+'%', '%'+name+'%'))
     print_cmd(cmd)
@@ -120,19 +120,23 @@ def show_user_by_id(id):
 
 def new_user_menu():
     heading("new_user")
+    username = input('Username: ')
+    email = input('Email: ')
+    country = input('Country: ')
     fname = input('First name: ')
     lname = input('Last name: ')
-    email = input('Email: ')
-    new_user(first_name=fname, last_name=lname, email=email)
+    join_date = input('Date Joined: ')
+    
+    new_user(username=username, email=email, country=country, first_name=fname, last_name=lname, join_date=join_date)
 
-def new_user(first_name, last_name, email):
+def new_user(username, email, country, first_name, last_name, join_date):
     tmpl = '''
-        INSERT INTO Users (first_name, last_name, email) VALUES (%s, %s, %s)
+        INSERT INTO Users (username, email, country, fname, lname, join_date) VALUES (%s, %s, %s, %s, %s, %s)
     '''
-    cmd = cur.mogrify(tmpl, (first_name, last_name, email))
+    cmd = cur.mogrify(tmpl, (username, email, country, first_name, last_name, join_date))
     print_cmd(cmd)
     cur.execute(cmd)
-    show_user(first_name)
+    list_users()
     
 #-----------------------------------------------------------------
 # show_friends
@@ -145,11 +149,11 @@ def show_friends_menu():
 
 def show_friends(uid):
     tmpl = '''
-        SELECT s.uid, s.first_name, s.last_name
+        SELECT s.username, s.fname, s.lname
           FROM Friends as f
           JOIN Users as s
-            ON s.uid = f.uid_2
-         WHERE f.uid_1 = %s
+            ON s.uid = f.uid2
+         WHERE f.uid1 = %s
     '''
     cmd = cur.mogrify(tmpl, (uid, ))
     print_cmd(cmd)
@@ -164,22 +168,23 @@ def show_friends(uid):
 
 def add_friend_menu():
     print("add_friend")
-    username = input("Username: ")
-    friend_username = input("Friend's Username: ")
-    add_friend(username, friend_username)
+    userID = input("User ID: ")
+    friend_userID = input("Friend's User ID: ")
+    simultaneous_play = input("Play Music Together? (True/False): ")
+    add_friend(userID, friend_userID, simultaneous_play)
 
-def add_friend(username, friend_username):
+def add_friend(userID, friend_userID, simultaneous_play):
     tmpl = '''
-        INSERT INTO Users (username, friend_username) VALUES (%s, %s)
+        INSERT INTO Friends (uid1, uid2, simultaneous_play) VALUES (%s, %s, %s)
     '''
-    cmd = cur.mogrify(tmpl, (username, friend_username))
+    cmd = cur.mogrify(tmpl, (userID, friend_userID, simultaneous_play))
     print_cmd(cmd)
     cur.execute(cmd)
-    cmd = cur.mogrify(tmpl, (friend_username, username))
+    cmd = cur.mogrify(tmpl, (friend_userID, userID, simultaneous_play))
     print_cmd(cmd)
     cur.execute(cmd)
-    show_friends(username)
-    show_friends(friend_username)
+    show_friends(userID)
+    show_friends(friend_userID)
     
 #-----------------------------------------------------------------
 # show messages
@@ -209,7 +214,23 @@ def show_messages(uid):
 # create ad
 #-----------------------------------------------------------------
     
-    
+def make_ad_menu():
+     heading("make_ad")
+     duration = input("Ad Duration: ")
+     frequency = input("Ad Frequency: ")
+     ad_message = input("Ad Message: ")
+     cost = input("Ad Cost: ")
+     sponsorID = input("Sponsor ID: ")
+     make_ad(duration, frequency, ad_message, cost, sponsorID)
+
+def make_ad(duration, frequency, ad_message, cost, sponsorID):
+    tmpl = '''INSERT INTO Ads (duration, frequency, information, cost, sponsor_id) VALUES (%s, %s, %s, %s, %s)'''
+    cmd = cur.mogrify(tmpl, (duration, frequency, ad_message, cost, sponsorID))
+    print_cmd(cmd)
+    cur.execute(cmd)
+    rows = cur.fetchall()
+    print_rows(rows)
+    print()
     
 #-----------------------------------------------------------------
 # post message
@@ -236,13 +257,13 @@ def post_message(posted_by, posted_to, message):
 
 actions = { 1:list_users_menu,    2:show_user_menu,   3:new_user_menu,
             4:show_friends_menu,  5:add_friend_menu,
-            6:show_messages_menu, 7:post_message_menu }
+            6:make_ad_menu, 7:post_message_menu }
 
 
 if __name__ == '__main__':
     try:
         # default database and user
-        db, user = 'socnet', 'isdb'
+        db, user = 'spotifydb', 'isdb'
         # you may have to adjust the user 
         # python a4-socnet-sraja.py a4_socnet postgres
         if len(sys.argv) >= 2:
