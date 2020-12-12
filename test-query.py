@@ -1,7 +1,14 @@
-    
+import psycopg2
+import sys    
+from prettytable import from_csv
+with open("Songs.csv") as fp:
+    mytable = from_csv(fp)
 #-----------------------------------------------------------------
 # show_menu
 #-----------------------------------------------------------------
+x = mytable
+x.align = "r"
+print(x)
 
 def show_menu():
     menu = '''
