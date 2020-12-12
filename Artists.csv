@@ -1,9 +1,6 @@
-artist_name,monthly_listeners
-Pink,20000000
-Justhis,100000000
-Bastille,100
-Panic! At The Disco,50000
-Coldplay,7000000
-Dua Lipa,400000
-BTS,1
-The Chainsmokers,12
+artist_id,artist_name,monthly_listeners
+1,Pink,20000000
+2,Justhis,100000000
+3,Bastille,100
+4,Panic! At The Disco,50000
+5,Coldplay,7000000
