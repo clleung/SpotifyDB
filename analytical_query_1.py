@@ -81,7 +81,7 @@ def list_users():
     '''
     cur.execute(tmpl)
     rows = cur.fetchall()
-    table = PrettyTable(['uid','username', 'email', 'country', 'fname', 'lname', 'join_date'])
+    table = PrettyTable(['uid',;'username', 'email', 'country', 'fname', 'lname', 'join_date'])
     for row in rows:
         table.add_row(row)
     print(table)
