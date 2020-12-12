@@ -5,10 +5,6 @@
 import psycopg2
 import sys
 
-from prettytable import from_csv
-with open("Ads.csv") as fp:
-    mytable = from_csv(fp)
-
 def heading(str):
     print('-'*60)
     print("** %s:" % (str,))
@@ -23,10 +19,6 @@ def print_rows(rows):
     for row in rows:
         print(row)
 
-x = mytable
-x.align = "r"
-print("Ads Table")
-print(x)
 #------------------------------------------------------------
 # show_menu
 #------------------------------------------------------------
@@ -36,16 +28,21 @@ def show_menu():
 
 --------------------------------------------------
 1. List users 
-2. Show user 
 3. New user 
 ---
-4. Show friends 
-5. Add friend 
+3. Show friends 
+4. Add friend 
 ---
-6. Make an Ad
-7. Post message
+5. Make an Ad
+6. Show Ad
+---
+7. Stream Song
+8. Count the Plays a User has Played a Song
+---
+9. Make External Ad
+10. Make Artist Ad
 
-Choose (1-7, 0 to quit): '''
+Choose (1-11, 0 to quit): '''
 
     try:
         choice = int(input( menu ))
@@ -57,7 +54,7 @@ Choose (1-7, 0 to quit): '''
             print('Done.')
             cur.close()
             conn.close()
-        elif choice in range(1,1+7):
+        elif choice in range(1,1+10):
             print()
             actions[choice]()
             show_menu()
@@ -91,36 +88,6 @@ def list_users():
     for row in rows:
         username, email, country, fname, lname, join_date, friend_username = row
         print("%s. %s, %s, %s, %s, %s (%s)" % (username, email, country, fname, lname, join_date, friend_username))
-
-#-----------------------------------------------------------------
-# show_user
-#-----------------------------------------------------------------
-
-def show_user_menu():
-    heading("Show User(s):")
-    name = input('User name: ')
-    show_user(name)
-    
-def show_user(name):
-    tmpl = '''
-        SELECT *
-          FROM Users as u
-         -- ILIKE is a case insensitive LIKE
-         WHERE (username = %s );
-    '''
-    cmd = cur.mogrify(tmpl, ('%'+name+'%', '%'+name+'%'))
-    print_cmd(cmd)
-    cur.execute(cmd)
-    rows = cur.fetchall()
-    print_rows(rows)
-    print()
-    for row in rows:
-        username, email, country, fname, lname, join_date, friend_username = row
-        print("%s. %s, %s, %s, %s, %s (%s)" % (username, email, country, fname, lname, join_date, friend_username))
-
-
-def show_user_by_id(id):
-    pass
 
 #-----------------------------------------------------------------
 # new_user
@@ -239,33 +206,117 @@ def make_ad(duration, frequency, ad_message, cost, sponsorID):
     rows = cur.fetchall()
     print_rows(rows)
     print()
-    
-#-----------------------------------------------------------------
-# post message
-#-----------------------------------------------------------------
 
-def post_message_menu():
-    heading("post_message")
-    posted_by = input('Posted by: ')
-    posted_to = input("Posted to: ")
-    message = input('Message: ')
-    post_message(posted_by=posted_by, posted_to=posted_to, message=message)
+#-----------------------------------------------------------------
+# show ad
+#----------------------------------------------------------------- 
 
-def post_message(posted_by, posted_to, message):
+def show_ad_menu():
+    heading("show_ad")
+    ad_id = input("Ad ID: ")
+    show_ad(ad_id)
+
+def show_ad(ad_id):
     tmpl = '''
-        INSERT INTO Messages (posted_by, posted_to, message) VALUES (%s, %s, %s)
+        SELECT *
+          FROM Ads
     '''
-    cmd = cur.mogrify(tmpl, (posted_by, posted_to, message))
+    cmd = cur.mogrify(tmpl, (ad_id))
     print_cmd(cmd)
     cur.execute(cmd)
-    show_messages(posted_by)
-    
+    rows = cur.fetchall()
+    print_rows(rows)
+    print()
+
+#-----------------------------------------------------------------
+# play song
+#----------------------------------------------------------------- 
+
+def play_song_menu():
+    heading("play a song")
+    uid = input("User ID: ")
+    song_id = input("Song ID: ")
+    date = input("Date: ")
+    time = input("Time: ")
+    play_song(uid, song_id, date, time)
+
+def play_song(uid, song_id, date, time):
+    tmpl = '''INSERT INTO Stream (uid, song_id, date, time) VALUES (%s, %s, %s, %s)'''
+    cmd = cur.mogrify(tmpl, (uid, song_id, date, time))
+    print_cmd(cmd)
+    cur.execute(cmd)
+    rows = cur.fetchall()
+    print_rows(rows)
+    print()
+
+
+#-----------------------------------------------------------------
+# count plays
+#----------------------------------------------------------------- 
+
+def count_plays_menu():
+    heading("count number of plays a song has")
+    uid = input("User ID: ")
+    song_id = input("Song ID: ")
+    count_plays(uid, song_id)
+
+def count_plays(uid, song_id):
+    tmpl = '''SELECT count(song_id)
+                FROM Stream
+               WHERE (uid = %s) and (song_id = %s)'''
+    cmd = cur.mogrify(tmpl, (uid, song_id))
+    print_cmd(cmd)
+    cur.execute(cmd)
+    rows = cur.fetchall()
+    print_rows(rows)
+    print()
+
+#-----------------------------------------------------------------
+# make external ad
+#----------------------------------------------------------------- 
+
+def make_external_ad_menu():
+    heading("make_external_ad")
+    adID = input("Ad ID: ")
+    clientName = input("Client Name: ")
+    make_external_ad(adID, clientName)
+
+def make_external_ad(adID, clientName):
+    tmpl = '''INSERT INTO External_Ads (ad_id, client_name) VALUES (%s, %s)'''
+    cmd = cur.mogrify(tmpl, (adID, clientName))
+    print_cmd(cmd)
+    cur.execute(cmd)
+    rows = cur.fetchall()
+    print_rows(rows)
+    print()
+
+#-----------------------------------------------------------------
+# make artist ad
+#----------------------------------------------------------------- 
+
+def make_artist_ad_menu():
+    heading("make_artist_ad")
+    adID = input("Ad ID: ")
+    artistID = input("Artist ID: ")
+    eventDate = input("Event Date: ")
+    make_external_ad(adID, artistID, eventDate)
+
+def make_external_ad(adID, artistID, eventDate):
+    tmpl = '''INSERT INTO Artist_Ads (adID, artistID, eventDate) VALUES (%s, %s, %s)'''
+    cmd = cur.mogrify(tmpl, (adID, artistID, eventDate))
+    print_cmd(cmd)
+    cur.execute(cmd)
+    rows = cur.fetchall()
+    print_rows(rows)
+    print()
+
 # We leverage the fact that in Python functions are first class
 # objects and build a dictionary of functions numerically indexed 
 
-actions = { 1:list_users_menu,    2:show_user_menu,   3:new_user_menu,
-            4:show_friends_menu,  5:add_friend_menu,
-            6:make_ad_menu, 7:post_message_menu }
+actions = { 1:list_users_menu,  2:new_user_menu,
+            3:show_friends_menu,  4:add_friend_menu,
+            5:make_ad_menu, 6:show_ad_menu, 7:play_song_menu,
+            8:count_plays_menu, 9:make_external_ad_menu, 10:make_artist_ad_menu }
 
 
 if __name__ == '__main__':
