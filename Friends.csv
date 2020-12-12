@@ -1,0 +1,6 @@
+uid1,uid2,simultaneous_play
+1,5,TRUE
+2,4,FALSE
+3,3,FALSE
+4,2,TRUE
+5,1,TRUE
