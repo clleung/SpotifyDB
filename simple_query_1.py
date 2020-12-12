@@ -1,5 +1,6 @@
 import psycopg2
-import sys    
+import sys 
+
 from prettytable import from_csv
 with open("Songs.csv") as fp:
     mytable = from_csv(fp)
@@ -24,36 +25,11 @@ def print_rows(rows):
 
 def show_menu():
     menu = '''
-Simple Query 1:
-As an Artist, I want to post songs so that I can gain revenue and followers.
---------------------------------------------------
+    Simple Query 1:
+    As an Artist, I want to post songs so that I can gain revenue and followers.
 
-1. Add Song
-
-Select 1 to start, 0 to quit: '''
-
-    try:
-        choice = int(input( menu ))
-    except ValueError:
-        print("\n\n* Invalid choice. Choose again.")
-        show_menu()
-    else:
-        if choice == 0:
-            print('Done.')
-            cur.close()
-            conn.close()
-        elif choice == 1:
-            print()
-            actions[choice]()
-            show_menu()
-        else:
-            print("\n\n* Invalid choice (%s). Choose again." % choice)
-            show_menu()
-    finally:
-        if cur != None:
-            cur.close() 
-        if conn != None:
-            conn.close() 
+    '''
+    print(menu)
     
 #-----------------------------------------------------------------
 # print the PrettyTable
@@ -66,32 +42,63 @@ print("Songs Table")
 print(x)
 
 #-----------------------------------------------------------------
-# post_song
+# list_songs
+#-----------------------------------------------------------------
+def list_users():
+    tmpl = '''
+        SELECT *
+          FROM Songs as s
+         ORDER BY song_id ASC
+    '''
+    cur.execute(tmpl)
+    rows = cur.fetchall()
+    print_rows(rows)
+    print()
+    for row in rows:
+        username, email, country, fname, lname, join_date, friend_username = row
+        print("%s. %s, %s, %s, %s, %s (%s)" % (username, email, country, fname, lname, join_date, friend_username))
+
+#-----------------------------------------------------------------
+# show_song
 #-----------------------------------------------------------------
 
-def post_song():
-    print("post_song")
-    songname = input("Song Name: ")
-    release_date = input("Release Date: (yyyy-mm-dd) ")
-    genre = input("Genre: ")
-    num_plays = input("Number of Plays: ")
-    duration = input("Duration: ")
-    artist_name = input("Artist Name: ")
-
-    add_song(songname, release_date, genre, num_plays, duration, artist_id)
-
-def add_song(songname, release_date, genre, num_plays, duration, artist_id):
+def show_song():
     tmpl = '''
-        INSERT INTO Songs (songname, release_date, genre, num_plays, duration, artist_id)
-        VALUES (%s, %s, %s, %s, %s, %s)
+        SELECT s.username, s.fname, s.lname
+          FROM Friends as f
+          JOIN Users as s
+            ON s.uid = f.uid2
+         WHERE f.uid1 = %s
     '''
-    cmd = cur.mogrify(tmpl, (songname, release_date, genre, num_plays, duration, artist_id))
+    cmd = cur.mogrify(tmpl, (uid, ))
     print_cmd(cmd)
     cur.execute(cmd)
     rows = cur.fetchall()
     print_rows(rows)
     print()
+    for row in rows:
+        username, email, country, fname, lname, join_date, friend_username = row
+        print("%s. %s, %s, %s, %s, %s (%s)" % (username, email, country, fname, lname, join_date, friend_username))
+        
+#-----------------------------------------------------------------
+# add_song
+#-----------------------------------------------------------------
 
+def add_song(song_name, release_date, genre, num_plays, duration, artist_id):
+    tmpl = '''
+        INSERT INTO Songs (song_name, release_date, genre, num_plays, duration, artist_id)
+        VALUES (%s, %s, %s, %s, %s, %s)
+    '''
+    cmd = cur.mogrify(tmpl, (song_name, release_date, genre, num_plays, duration, artist_id))
+    print_cmd(cmd)
+    cur.execute(cmd)
+    show_friends(userID)
+    
+
+
+#-----------------------------------------------------------------
+# song details we are adding
+#-----------------------------------------------------------------
 print("Song Name: Vibes for Quarantine")
 print("Release Date: 2020-04-04")
 print("Genre: Chill")
@@ -99,10 +106,6 @@ print("Number of Plays: 100000")
 print("Duration: 0:02:10")
 print("Artist Id: 2")
 
-add_song("Vibes for Quarantine", "2020-04-04", "Chill", "100000", "0:02:10", "2")
-x.align = "r"
-print("Songs Table")
-print(x)
 
 
 actions = { 1:add_song}
@@ -127,3 +130,8 @@ if __name__ == '__main__':
         show_menu()
     except psycopg2.Error as e:
         print("Unable to open connection: %s" % (e,))
+
+add_song("Vibes for Quarantine", "2020-04-04", "Chill", "100000", "0:02:10", "2")
+x.align = "r"
+print("Songs Table")
+print(x)
