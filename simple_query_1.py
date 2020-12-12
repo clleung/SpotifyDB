@@ -3,24 +3,40 @@ import sys
 from prettytable import from_csv
 with open("Songs.csv") as fp:
     mytable = from_csv(fp)
-#-----------------------------------------------------------------
-# print the PrettyTable
-#-----------------------------------------------------------------
-x = mytable
-x.align = "r"
-print("Songs Table")
-print(x)
+
+def heading(str):
+    print('-'*60)
+    print("** %s:" % (str,))
+    print('-'*60, '\n')    
+
+SHOW_CMD = True
+def print_cmd(cmd):
+    if SHOW_CMD:
+        print(cmd.decode('utf-8'))
+
+def print_rows(rows):
+    for row in rows:
+        print(row)
+
+#------------------------------------------------------------
+# show_menu
+#------------------------------------------------------------
 
 def show_menu():
     menu = '''
 
 --------------------------------------------------
-1. Show a Song
-2. Post a Song
-3. Add a Friend
-4. Show Messages
+1. List users 
+2. Show user 
+3. New user 
+---
+4. Show friends 
+5. Add friend 
+---
+6. Show messages
+7. Post message
 
-Choose (1-4, 0 to quit): '''
+Choose (1-7, 0 to quit): '''
 
     try:
         choice = int(input( menu ))
@@ -44,6 +60,21 @@ Choose (1-4, 0 to quit): '''
             cur.close() 
         if conn != None:
             conn.close() 
+    
+#-----------------------------------------------------------------
+# print the PrettyTable
+#-----------------------------------------------------------------
+
+
+print("Simple Query 1:")
+print("This is user story 1:")
+print("As an Artist, I want to post songs so that I can gain revenue and followers.")
+print("Below is the Songs Table")
+
+x = mytable
+x.align = "r"
+print("Songs Table")
+print(x)
 
 #-----------------------------------------------------------------
 # post_song
@@ -54,25 +85,34 @@ def post_song():
     songname = input("Song Name: ")
     release_date = input("Release Date: (yyyy-mm-dd) ")
     genre = input("Genre: ")
-    num_plays = ("Number of Plays: ")
-    duration = ("Duration: ")
-    artist_name = ("Artist Name: ")
+    num_plays = input("Number of Plays: ")
+    duration = input("Duration: ")
+    artist_name = input("Artist Name: ")
 
-    add_song(songname, release_date, genre, num_plays, duration, artist_name)
+    add_song(songname, release_date, genre, num_plays, duration, artist_id)
 
-def add_song(songname, release_date, genre, num_plays, duration, artist_name):
+def add_song(songname, release_date, genre, num_plays, duration, artist_id):
     tmpl = '''
-        INSERT INTO Songs (songname, release_date, genre, num_plays, duration, artist_name)
+        INSERT INTO Songs (songname, release_date, genre, num_plays, duration, artist_id)
         VALUES (%s, %s, %s, %s, %s, %s)
     '''
-    cmd = cur.mogrify(tmpl, (songname, release_date, genre, num_plays, duration, artist_name))
-    print_cmd(cmd)
-    cur.execute(cmd)
-    cmd = cur.mogrify(tmpl, (songname, release_date, genre, num_plays, duration, artist_name))
+    cmd = cur.mogrify(tmpl, (songname, release_date, genre, num_plays, duration, artist_id))
     print_cmd(cmd)
     cur.execute(cmd)
     show_songs(artist_name)
-    
+
+songname = "Song Name: Vibes for Quarantine"
+release_date = "Release Date: 2020-04-04 "
+genre = "Genre: Chill"
+num_plays = "Number of Plays: 100000"
+duration = "Duration: 0:02:10"
+artist_name = "Artist Id: 2"
+
+add_song("Vibes for Quarantine", "2020-04-04", "Chill", "100000", "0:02:10", "2")
+x.align = "r"
+print("Songs Table")
+print(x)
+
 #-----------------------------------------------------------------
 # show_songs
 #-----------------------------------------------------------------
