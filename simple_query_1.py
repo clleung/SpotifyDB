@@ -122,6 +122,7 @@ def new_song(song_name, release_date, genre, num_plays, duration, artist_id):
     cmd = cur.mogrify(tmpl, (song_name, release_date, genre, num_plays, duration, artist_id))
     print_cmd(cmd)
     cur.execute(cmd)
+    print("note that Vibes for Quarantine is a new song in the table")
     list_songs()
     
 

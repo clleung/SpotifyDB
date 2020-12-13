@@ -30,10 +30,10 @@ def show_menu():
     menu = '''
 This is simple_query_2
 
-User Story 1:
+User Story 4:
 As an Artist, 
-I want to post songs 
-so that I can gain revenue and followers.
+I want to take down content
+so that I can post my content with a different company
 --------------------------------------------------
 1. List All Songs
 2. New Song
@@ -64,14 +64,14 @@ Choose (1-2, 0 to quit): '''
             conn.close() 
     
 #------------------------------------------------------------
-# list_songs
+# list_songs_and_streams
 #------------------------------------------------------------
 
-def list_songs_menu():
-    heading('List Users:')
-    list_songs()
+def list_songs_and_streams_menu():
+    heading('List Songs and Streams:')
+    list_songs_and_streams()
 
-def list_songs():
+def list_songs_and_streams():
     tmpl = '''
         SELECT *
           FROM Songs as s
@@ -84,6 +84,18 @@ def list_songs():
         table.add_row(row)
     print(table)
 
+    tmpl2 = '''
+        SELECT *
+          FROM Stream as s
+         ORDER BY stream_id DESC
+    '''
+    cur.execute(tmpl2)
+    rows = cur.fetchall()
+    table1 = PrettyTable(['stream_id','uid','song_id', 'date', 'time'])
+    for row in rows:
+        table1.add_row(row)
+    print(table1)
+
 
 #-----------------------------------------------------------------
 # delete_all_songs
@@ -91,53 +103,47 @@ def list_songs():
 
 def delete_all_songs_menu():
     heading('''
-            delete_all_songs: this query will add in a new song: "Vibes for Quarantine"
+            delete_all_songs: this user story requires a deletion in the Stream and a deletion in the Songs tables,
+            as song_id is used in both Stream and Songs and there cannot be any dangling references.
 
-            we will be inserting it into the Songs table, and print the table with the most recent 
-            entry on top ("High Hopes" before the query and "Vibes for Quarantine" after)
+            if you run simple_query_1.py before this, both Vibes for Quarantine and That Ain't Real will be deleted
 
-            we have hard coded these values:
+            we also will not be deleting the account, as the user story is just for deleting all songs.
             
-                song_name = "Vibes for Quarantine"
-                release_date = "2020-04-04"
-                genre = "Chill"
-                num_plays = "100000"
-                duration = "0:02:10"
-                artist_id = 2
     ''')
-    song_name = "Vibes for Quarantine"
-    release_date = "2020-04-04"
-    genre = "Chill"
-    num_plays = "100000"
-    duration = "0:02:10"
+   
     artist_id = 2
-    song_id = 2
     
-    delete_all_songs(song_id = song_id)
+    delete_all_songs(artist_id = artist_id)
 
-def delete_all_songs(song_id):
+def delete_all_songs(artist_id):
     tmpl = '''
         DELETE FROM Stream as st
-         WHERE (st.song_id = %s)
-
+         WHERE (st.song_id IN (SELECT so.song_id
+                                FROM Songs as so
+                               WHERE (so.artist_id = %s)))
         
     '''
-    cmd = cur.mogrify(tmpl, (song_id,))
+    cmd = cur.mogrify(tmpl, (artist_id,))
     print_cmd(cmd)
     cur.execute(cmd)
-    
-    rows = cur.fetchall()
-    table = PrettyTable(['song_id', 'song_name', 'release_date', 'genre','num_plays', 'duration', 'artist_id' ])
-    for row in rows:
-        table.add_row(row)
-    print(table)
+
+    tmpl2 = '''
+        DELETE FROM Songs as s
+         WHERE (s.artist_id = %s)
+    '''
+    cmd2 = cur.mogrify(tmpl2, (artist_id,))
+    print_cmd(cmd2)
+    cur.execute(cmd2)
+    print("Note that This Ain't Real from the Songs Table and stream_id 5 (or song_id 1) have been deleted from the Stream Table")
+    list_songs_and_streams()
     
 
     
 # We leverage the fact that in Python functions are first class
 # objects and build a dictionary of functions numerically indexed 
 
-actions = { 1:list_songs_menu,    2:delete_all_songs_menu }
+actions = { 1:list_songs_and_streams_menu,    2:delete_all_songs_menu }
 
 
 if __name__ == '__main__':

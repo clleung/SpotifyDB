@@ -30,10 +30,10 @@ def show_menu():
     menu = '''
 This is complex_query_1
 
-User Story 1:
-As an Artist, 
-I want to post songs 
-so that I can gain revenue and followers.
+User Story 5:
+As a Listener, 
+I want to find out information about the song and content creator 
+so that I can listen to similar content in the genre and listen to more from the content creator.
 --------------------------------------------------
 1. List All Songs
 2. New Song
@@ -64,25 +64,14 @@ Choose (1-2, 0 to quit): '''
             conn.close() 
     
 #------------------------------------------------------------
-# list_users_and_artists_and_songs
+# list_artists_and_songs
 #------------------------------------------------------------
 
-def list_users_and_artists_and_songs_menu():
-    heading('List Users, Artists, and Songs:')
-    list_users_and_artists_and_songs()
+def list_artists_and_songs_menu():
+    heading('List Artists and Songs:')
+    list_artists_and_songs()
 
-def list_users_and_artists_and_songs():
-    tmpl = '''
-        SELECT *
-          FROM Users as a
-         ORDER BY uid DESC
-    '''
-    cur.execute(tmpl)
-    rows = cur.fetchall()
-    table = PrettyTable(['uid', 'username', 'email', 'country', 'fname', 'lname', 'join_date'])
-    for row in rows:
-        table.add_row(row)
-    print(table)
+def list_artists_and_songs():
 
     tmpl1 = '''
         SELECT *
@@ -117,26 +106,9 @@ def list_users_and_artists_and_songs():
 
 def get_song_and_creator_info_menu():
     heading('''
-            get_song_and_creator_info: this query will add in a new song: "Vibes for Quarantine"
-
-            we will be inserting it into the Songs table, and print the table with the most recent 
-            entry on top ("High Hopes" before the query and "Vibes for Quarantine" after)
-
-            we have hard coded these values:
-            
-                song_name = "Vibes for Quarantine"
-                release_date = "2020-04-04"
-                genre = "Chill"
-                num_plays = "100000"
-                duration = "0:02:10"
-                artist_id = 2
+            get_song_and_creator_info: this query find the song and artist information for song_id 4, of Viva la Vida (by Coldplay)
     ''')
-    song_name = "Vibes for Quarantine"
-    release_date = "2020-04-04"
-    genre = "Chill"
-    num_plays = "100000"
-    duration = "0:02:10"
-    artist_id = 2
+    
     song_id = 4
     get_song_and_creator_info(song_id = song_id)
 
@@ -163,7 +135,7 @@ def get_song_and_creator_info(song_id):
 # We leverage the fact that in Python functions are first class
 # objects and build a dictionary of functions numerically indexed 
 
-actions = { 1:list_users_and_artists_and_songs_menu,    2:get_song_and_creator_info_menu }
+actions = { 1:list_artists_and_songs_menu,    2:get_song_and_creator_info_menu }
 
 
 if __name__ == '__main__':

@@ -30,10 +30,11 @@ def show_menu():
     menu = '''
 This is analytical_query_2
 
-User Story 1:
+User Story 3:
 As an Artist, 
-I want to post songs 
-so that I can gain revenue and followers.
+I want to see how many songs I have posted
+so that I know how much work I’ve committed to Spotify.
+
 --------------------------------------------------
 1. List All Songs
 2. New Song
@@ -74,7 +75,7 @@ def list_artists_and_songs_menu():
 def list_artists_and_songs():
     tmpl1 = '''
         SELECT *
-          FROM Artists as s
+          FROM Artists as a
          ORDER BY artist_id DESC
     '''
     cur.execute(tmpl1)
@@ -105,25 +106,10 @@ def list_artists_and_songs():
 
 def view_songs_menu():
     heading('''
-            view_songs: this query will add in a new song: "Vibes for Quarantine"
+            view_songs: this query will display the songs that artist_id 2, or Justhis has posted
 
-            we will be inserting it into the Songs table, and print the table with the most recent 
-            entry on top ("High Hopes" before the query and "Vibes for Quarantine" after)
-
-            we have hard coded these values:
-            
-                song_name = "Vibes for Quarantine"
-                release_date = "2020-04-04"
-                genre = "Chill"
-                num_plays = "100000"
-                duration = "0:02:10"
-                artist_id = 2
     ''')
-    song_name = "Vibes for Quarantine"
-    release_date = "2020-04-04"
-    genre = "Chill"
-    num_plays = "100000"
-    duration = "0:02:10"
+    
     artist_id = 2
     
     view_songs(artist_id = artist_id)

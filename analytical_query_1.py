@@ -32,7 +32,7 @@ This is analytical_query_1
 
 User Story 2:
 As an Artist,
-I want to see how many people stream my content 
+I want to see how many people stream my each of my songs
 so that I know what kind of content I should create in the future and what my followers like.
 --------------------------------------------------
 1. List All Artists and Streams
@@ -74,7 +74,7 @@ def list_artists_and_streams_menu():
 def list_artists_and_streams():
     tmpl1 = '''
         SELECT *
-          FROM Artists as s
+          FROM Artists as a
          ORDER BY artist_id DESC
     '''
     cur.execute(tmpl1)
@@ -91,39 +91,20 @@ def list_artists_and_streams():
     '''
     cur.execute(tmpl2)
     rows = cur.fetchall()
-    table2 = PrettyTable(['stream_id','uid','song_id', 'date', 'time'])
+    table1 = PrettyTable(['stream_id','uid','song_id', 'date', 'time'])
     for row in rows:
-        table2.add_row(row)
-    print(table2)
-
-
-
-
+        table1.add_row(row)
+    print(table1)
+    
 #-----------------------------------------------------------------
 # new_song
 #-----------------------------------------------------------------
 
 def view_streamers_menu():
     heading('''
-            view_streamers: this query will add in a new song: "Vibes for Quarantine"
-
-            we will be inserting it into the Songs table, and print the table with the most recent 
-            entry on top ("High Hopes" before the query and "Vibes for Quarantine" after)
-
-            we have hard coded these values:
-            
-                song_name = "Vibes for Quarantine"
-                release_date = "2020-04-04"
-                genre = "Chill"
-                num_plays = "100000"
-                duration = "0:02:10"
-                artist_id = 2
+            view_streamers: this query will display the streams per song for artist_id 2, of Justhis.
     ''')
-    song_name = "Vibes for Quarantine"
-    release_date = "2020-04-04"
-    genre = "Chill"
-    num_plays = "100000"
-    duration = "0:02:10"
+    
     artist_id = 2
     
     view_streamers(artist_id = artist_id)
