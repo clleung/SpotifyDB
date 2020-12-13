@@ -45,6 +45,7 @@ def show_menu():
 ---
 12. Make External Ad
 13. List External Ads
+---
 14. Make Artist Ad
 15. List Artist Ads
 
@@ -100,20 +101,20 @@ def list_users():
 
 def new_user_menu():
     heading("new_user")
-    username = input('Username: ')
-    email = input('Email: ')
-    country = input('Country: ')
-    fname = input('First name: ')
-    lname = input('Last name: ')
-    join_date = input('Date Joined: ')
+    username = "Roxsaw"
+    email = "rox@andrew.cmu.edu"
+    country = "USA"
+    fname = "Roxanne"
+    lname = "Shaw"
+    join_date = "2020-12-10"
     
-    new_user(username=username, email=email, country=country, first_name=fname, last_name=lname, join_date=join_date)
+    new_user(username=username, email=email, country=country, fname=fname, lname=lname, join_date=join_date)
 
-def new_user(username, email, country, first_name, last_name, join_date):
+def new_user(username, email, country, fname, lname, join_date):
     tmpl = '''
         INSERT INTO Users (username, email, country, fname, lname, join_date) VALUES (%s, %s, %s, %s, %s, %s)
     '''
-    cmd = cur.mogrify(tmpl, (username, email, country, first_name, last_name, join_date))
+    cmd = cur.mogrify(tmpl, (username, email, country, fname, lname, join_date))
     print_cmd(cmd)
     cur.execute(cmd)
     list_users()
@@ -124,7 +125,7 @@ def new_user(username, email, country, first_name, last_name, join_date):
 
 def show_friends_menu():
     heading("Show friends")    
-    uid = input("User id: ")
+    uid = 1
     show_friends(uid)
 
 def show_friends(uid):
@@ -139,8 +140,10 @@ def show_friends(uid):
     print_cmd(cmd)
     cur.execute(cmd)
     rows = cur.fetchall()
-    print_rows(rows)
-    print()
+    table = PrettyTable(['username', 'fname', 'lname'])
+    for row in rows:
+        table.add_row(row)
+    print(table)
 
 def list_friends_menu():
     heading('Shows who is friends with who')
@@ -164,7 +167,10 @@ def list_friends():
 #-----------------------------------------------------------------
 
 def add_friend_menu():
-    print("add_friend")
+    print('''User Story 6 (Complex): As a listener, I want to find my friends on Spotify, so that I can 
+                           listen to music with them
+             User Story 8 (Complex): As a listener, I want to listen to songs simultaneously with my friends,
+                           so that we can enjoy high-quality music at the same time regardless of distance''')
     userID = input("User ID: ")
     friend_userID = input("Friend's User ID: ")
     simultaneous_play = input("Play Music Together? (True/False): ")
@@ -188,22 +194,28 @@ def add_friend(userID, friend_userID, simultaneous_play):
 #-----------------------------------------------------------------
     
 def make_ad_menu():
-     heading("make_ad")
-     duration = input("Ad Duration: ")
-     frequency = input("Ad Frequency: ")
-     ad_message = input("Ad Message: ")
-     cost = input("Ad Cost: ")
-     sponsorID = input("Sponsor ID: ")
-     make_ad(duration, frequency, ad_message, cost, sponsorID)
+     heading('''User Story 9 (Analytical):
+                As an advertiser, I want to advertise on the homepage so that
+                I can increase ny client base and have more people use my goods
+                and services (external company)
+                
+                User Story 10 (Complex):
+                As an advertiser, I want to advertise new releases for my content
+                creator so that they can get more followers (increasing followers
+                and royalties) and specifically reach out to their current followers''')
+     duration = "00:00:15"
+     frequency = "1500"
+     ad_message = "Welcome to McDonald's"
+     cost = "$999.00"
+     sponsorID = "8"
+     make_ad(duration=duration, frequency=frequency, information=ad_message, cost=cost, sponsor_id=sponsorID)
 
-def make_ad(duration, frequency, ad_message, cost, sponsorID):
+def make_ad(duration, frequency, information, cost, sponsor_id):
     tmpl = '''INSERT INTO Ads (duration, frequency, information, cost, sponsor_id) VALUES (%s, %s, %s, %s, %s)'''
-    cmd = cur.mogrify(tmpl, (duration, frequency, ad_message, cost, sponsorID))
+    cmd = cur.mogrify(tmpl, (duration, frequency, information, cost, sponsor_id))
     print_cmd(cmd)
     cur.execute(cmd)
-    rows = cur.fetchall()
-    print_rows(rows)
-    print()
+    list_ads()
 
 #-----------------------------------------------------------------
 # show ad
@@ -250,10 +262,10 @@ def list_ads():
 
 def play_song_menu():
     heading("play a song")
-    uid = input("User ID: ")
-    song_id = input("Song ID: ")
-    date = input("Date: ")
-    time = input("Time: ")
+    uid = "12"
+    song_id = "4"
+    date = "2020-12-04"
+    time = "01:15:12"
     play_song(uid, song_id, date, time)
 
 def play_song(uid, song_id, date, time):
@@ -261,9 +273,7 @@ def play_song(uid, song_id, date, time):
     cmd = cur.mogrify(tmpl, (uid, song_id, date, time))
     print_cmd(cmd)
     cur.execute(cmd)
-    rows = cur.fetchall()
-    print_rows(rows)
-    print()
+    list_streams()
 
 def list_streams_menu():
     heading("Shows all streams")
@@ -287,9 +297,11 @@ def list_streams():
 #----------------------------------------------------------------- 
 
 def count_plays_menu():
-    heading("count number of plays a song has")
-    uid = input("User ID: ")
-    song_id = input("Song ID: ")
+    heading('''User Story 7 (Analytical):
+                As a listener, I want to find out how many times I've listened
+                to a song so that I can see what I'm doing with my time''')
+    uid = "1"
+    song_id = "5"
     count_plays(uid, song_id)
 
 def count_plays(uid, song_id):
@@ -300,17 +312,23 @@ def count_plays(uid, song_id):
     print_cmd(cmd)
     cur.execute(cmd)
     rows = cur.fetchall()
-    print_rows(rows)
-    print()
+    table = PrettyTable(['song_id'])
+    for row in rows:
+        table.add_row(row)
+    print(table)
+
 
 #-----------------------------------------------------------------
 # make external ad
 #----------------------------------------------------------------- 
 
 def make_external_ad_menu():
-    heading("make_external_ad")
-    adID = input("Ad ID: ")
-    clientName = input("Client Name: ")
+    heading('''User Story 9 (Analytical):
+                As an advertiser, I want to advertise on the homepage so that
+                I can increase ny client base and have more people use my goods
+                and services (external company)''')
+    adID = "12"
+    clientName = "Pokimane"
     make_external_ad(adID, clientName)
 
 def make_external_ad(adID, clientName):
@@ -318,9 +336,7 @@ def make_external_ad(adID, clientName):
     cmd = cur.mogrify(tmpl, (adID, clientName))
     print_cmd(cmd)
     cur.execute(cmd)
-    rows = cur.fetchall()
-    print_rows(rows)
-    print()
+    list_external_ads()
 
 def list_external_ads_menu():
     heading("Shows all external ads made")
@@ -344,20 +360,21 @@ def list_external_ads():
 #----------------------------------------------------------------- 
 
 def make_artist_ad_menu():
-    heading("make_artist_ad")
-    adID = input("Ad ID: ")
-    artistID = input("Artist ID: ")
-    eventDate = input("Event Date: ")
+    heading('''User Story 10 (Complex):
+                As an advertiser, I want to advertise new releases for my content
+                creator so that they can get more followers (increasing followers
+                and royalties) and specifically reach out to their current followers''')
+    adID = "11"
+    artistID = "5"
+    eventDate = "2019-12-01"
     make_artist_ad(adID, artistID, eventDate)
 
 def make_artist_ad(adID, artistID, eventDate):
-    tmpl = '''INSERT INTO Artist_Ads (adID, artistID, eventDate) VALUES (%s, %s, %s)'''
+    tmpl = '''INSERT INTO Artist_Ads (ad_id, artist_id, event_date) VALUES (%s, %s, %s)'''
     cmd = cur.mogrify(tmpl, (adID, artistID, eventDate))
     print_cmd(cmd)
     cur.execute(cmd)
-    rows = cur.fetchall()
-    print_rows(rows)
-    print()
+    list_artist_ads()
 
 def list_artist_ads_menu():
     heading("Shows all artists ads made")
