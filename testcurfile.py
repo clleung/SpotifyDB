@@ -29,11 +29,6 @@ def print_rows(rows):
 def show_menu():
     menu = '''
 This is simple_query_1
-
-User Story 1:
-As an Artist, 
-I want to post songs 
-so that I can gain revenue and followers.
 --------------------------------------------------
 1. List All Songs
 2. New Song

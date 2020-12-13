@@ -28,7 +28,7 @@ def print_rows(rows):
 
 def show_menu():
     menu = '''
-This is simple_query_1
+This is simple_query_2
 
 User Story 1:
 As an Artist, 
@@ -86,12 +86,12 @@ def list_songs():
 
 
 #-----------------------------------------------------------------
-# new_song
+# delete_all_songs
 #-----------------------------------------------------------------
 
-def new_song_menu():
+def delete_all_songs_menu():
     heading('''
-            new_song: this query will add in a new song: "Vibes for Quarantine"
+            delete_all_songs: this query will add in a new song: "Vibes for Quarantine"
 
             we will be inserting it into the Songs table, and print the table with the most recent 
             entry on top ("High Hopes" before the query and "Vibes for Quarantine" after)
@@ -111,25 +111,33 @@ def new_song_menu():
     num_plays = "100000"
     duration = "0:02:10"
     artist_id = 2
+    song_id = 2
     
-    new_song(song_name = song_name, release_date = release_date, genre = genre, num_plays = num_plays, duration = duration, artist_id = artist_id)
+    delete_all_songs(song_id = song_id)
 
-def new_song(song_name, release_date, genre, num_plays, duration, artist_id):
+def delete_all_songs(song_id):
     tmpl = '''
-        INSERT INTO Songs (song_name, release_date, genre, num_plays, duration, artist_id)
-        VALUES (%s, %s, %s, %s, %s, %s)
+        DELETE FROM Stream as st
+         WHERE (st.song_id = %s)
+
+        
     '''
-    cmd = cur.mogrify(tmpl, (song_name, release_date, genre, num_plays, duration, artist_id))
+    cmd = cur.mogrify(tmpl, (song_id,))
     print_cmd(cmd)
     cur.execute(cmd)
-    list_songs()
+    
+    rows = cur.fetchall()
+    table = PrettyTable(['song_id', 'song_name', 'release_date', 'genre','num_plays', 'duration', 'artist_id' ])
+    for row in rows:
+        table.add_row(row)
+    print(table)
     
 
     
 # We leverage the fact that in Python functions are first class
 # objects and build a dictionary of functions numerically indexed 
 
-actions = { 1:list_songs_menu,    2:new_song_menu }
+actions = { 1:list_songs_menu,    2:delete_all_songs_menu }
 
 
 if __name__ == '__main__':

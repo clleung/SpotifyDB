@@ -28,7 +28,7 @@ def print_rows(rows):
 
 def show_menu():
     menu = '''
-This is simple_query_1
+This is analytical_query_2
 
 User Story 1:
 As an Artist, 
@@ -64,34 +64,48 @@ Choose (1-2, 0 to quit): '''
             conn.close() 
     
 #------------------------------------------------------------
-# list_songs
+# list_artists_and_songs
 #------------------------------------------------------------
 
-def list_songs_menu():
-    heading('List Users:')
-    list_songs()
+def list_artists_and_songs_menu():
+    heading('List Artists and Songs:')
+    list_artists_and_songs()
 
-def list_songs():
-    tmpl = '''
+def list_artists_and_songs():
+    tmpl1 = '''
+        SELECT *
+          FROM Artists as s
+         ORDER BY artist_id DESC
+    '''
+    cur.execute(tmpl1)
+    rows = cur.fetchall()
+    table1 = PrettyTable(['artist_id','artist_name','monthly_listeners'])
+    for row in rows:
+        table1.add_row(row)
+    print(table1)
+
+    tmpl2 = '''
         SELECT *
           FROM Songs as s
          ORDER BY song_id DESC
     '''
-    cur.execute(tmpl)
+    cur.execute(tmpl2)
     rows = cur.fetchall()
-    table = PrettyTable(['song_id','song_name','release_date','genre','num_plays','duration','artist_id'])
+    table2 = PrettyTable(['song_id', 'song_name','release_date','genre', 'num_plays', 'duration', 'artist_id'])
     for row in rows:
-        table.add_row(row)
-    print(table)
+        table2.add_row(row)
+    print(table2)
+
+
 
 
 #-----------------------------------------------------------------
-# new_song
+# view_songs
 #-----------------------------------------------------------------
 
-def new_song_menu():
+def view_songs_menu():
     heading('''
-            new_song: this query will add in a new song: "Vibes for Quarantine"
+            view_songs: this query will add in a new song: "Vibes for Quarantine"
 
             we will be inserting it into the Songs table, and print the table with the most recent 
             entry on top ("High Hopes" before the query and "Vibes for Quarantine" after)
@@ -112,24 +126,33 @@ def new_song_menu():
     duration = "0:02:10"
     artist_id = 2
     
-    new_song(song_name = song_name, release_date = release_date, genre = genre, num_plays = num_plays, duration = duration, artist_id = artist_id)
+    view_songs(artist_id = artist_id)
 
-def new_song(song_name, release_date, genre, num_plays, duration, artist_id):
+def view_songs(artist_id):
     tmpl = '''
-        INSERT INTO Songs (song_name, release_date, genre, num_plays, duration, artist_id)
-        VALUES (%s, %s, %s, %s, %s, %s)
+        SELECT a.artist_id, a.artist_name, COUNT(so.artist_id)
+          FROM Artists as a
+          JOIN Songs as so 
+               ON a.artist_id = so.artist_id
+         WHERE (a.artist_id = %s)
+         GROUP BY a.artist_id
     '''
-    cmd = cur.mogrify(tmpl, (song_name, release_date, genre, num_plays, duration, artist_id))
+    cmd = cur.mogrify(tmpl, (artist_id,))
     print_cmd(cmd)
     cur.execute(cmd)
-    list_songs()
+
+    rows = cur.fetchall()
+    table = PrettyTable(['artist_id', 'artist_name', 'song_count'])
+    for row in rows:
+        table.add_row(row)
+    print(table)
     
 
     
 # We leverage the fact that in Python functions are first class
 # objects and build a dictionary of functions numerically indexed 
 
-actions = { 1:list_songs_menu,    2:new_song_menu }
+actions = { 1:list_artists_and_songs_menu,    2:view_songs_menu }
 
 
 if __name__ == '__main__':

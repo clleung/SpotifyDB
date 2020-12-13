@@ -28,7 +28,7 @@ def print_rows(rows):
 
 def show_menu():
     menu = '''
-This is simple_query_1
+This is complex_query_1
 
 User Story 1:
 As an Artist, 
@@ -64,34 +64,60 @@ Choose (1-2, 0 to quit): '''
             conn.close() 
     
 #------------------------------------------------------------
-# list_songs
+# list_users_and_artists_and_songs
 #------------------------------------------------------------
 
-def list_songs_menu():
-    heading('List Users:')
-    list_songs()
+def list_users_and_artists_and_songs_menu():
+    heading('List Users, Artists, and Songs:')
+    list_users_and_artists_and_songs()
 
-def list_songs():
+def list_users_and_artists_and_songs():
     tmpl = '''
         SELECT *
-          FROM Songs as s
-         ORDER BY song_id DESC
+          FROM Users as a
+         ORDER BY uid DESC
     '''
     cur.execute(tmpl)
     rows = cur.fetchall()
-    table = PrettyTable(['song_id','song_name','release_date','genre','num_plays','duration','artist_id'])
+    table = PrettyTable(['uid', 'username', 'email', 'country', 'fname', 'lname', 'join_date'])
     for row in rows:
         table.add_row(row)
     print(table)
 
+    tmpl1 = '''
+        SELECT *
+          FROM Artists as s
+         ORDER BY artist_id DESC
+    '''
+    cur.execute(tmpl1)
+    rows = cur.fetchall()
+    table1 = PrettyTable(['artist_id','artist_name','monthly_listeners'])
+    for row in rows:
+        table1.add_row(row)
+    print(table1)
+
+    tmpl2 = '''
+        SELECT *
+          FROM Songs as s
+         ORDER BY song_id DESC
+    '''
+    cur.execute(tmpl2)
+    rows = cur.fetchall()
+    table2 = PrettyTable(['song_id', 'song_name','release_date','genre', 'num_plays', 'duration', 'artist_id'])
+    for row in rows:
+        table2.add_row(row)
+    print(table2)
+
+
+
 
 #-----------------------------------------------------------------
-# new_song
+# get_song_and_creator_info
 #-----------------------------------------------------------------
 
-def new_song_menu():
+def get_song_and_creator_info_menu():
     heading('''
-            new_song: this query will add in a new song: "Vibes for Quarantine"
+            get_song_and_creator_info: this query will add in a new song: "Vibes for Quarantine"
 
             we will be inserting it into the Songs table, and print the table with the most recent 
             entry on top ("High Hopes" before the query and "Vibes for Quarantine" after)
@@ -111,25 +137,33 @@ def new_song_menu():
     num_plays = "100000"
     duration = "0:02:10"
     artist_id = 2
-    
-    new_song(song_name = song_name, release_date = release_date, genre = genre, num_plays = num_plays, duration = duration, artist_id = artist_id)
+    song_id = 4
+    get_song_and_creator_info(song_id = song_id)
 
-def new_song(song_name, release_date, genre, num_plays, duration, artist_id):
+def get_song_and_creator_info(song_id):
     tmpl = '''
-        INSERT INTO Songs (song_name, release_date, genre, num_plays, duration, artist_id)
-        VALUES (%s, %s, %s, %s, %s, %s)
+        SELECT s.song_id, s.song_name, s.release_date, s.genre, s.num_plays, s.duration, s.artist_id, a.artist_name, a.monthly_listeners
+          FROM Songs as s
+          JOIN Artists as a 
+               ON s.artist_id = a.artist_id
+         WHERE (s.song_id = %s)
     '''
-    cmd = cur.mogrify(tmpl, (song_name, release_date, genre, num_plays, duration, artist_id))
+    cmd = cur.mogrify(tmpl, (song_id, ))
     print_cmd(cmd)
     cur.execute(cmd)
-    list_songs()
+
+    rows = cur.fetchall()
+    table = PrettyTable(['song_id', 'song_name','release_date','genre', 'num_plays', 'duration', 'artist_id', 'artist_name','monthly_listeners'])
+    for row in rows:
+        table.add_row(row)
+    print(table)
     
 
     
 # We leverage the fact that in Python functions are first class
 # objects and build a dictionary of functions numerically indexed 
 
-actions = { 1:list_songs_menu,    2:new_song_menu }
+actions = { 1:list_users_and_artists_and_songs_menu,    2:get_song_and_creator_info_menu }
 
 
 if __name__ == '__main__':

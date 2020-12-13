@@ -28,19 +28,17 @@ def print_rows(rows):
 
 def show_menu():
     menu = '''
+This is analytical_query_1
 
+User Story 2:
+As an Artist,
+I want to see how many people stream my content 
+so that I know what kind of content I should create in the future and what my followers like.
 --------------------------------------------------
-1. List users 
-2. Show user 
-3. New user 
----
-4. Show friends 
-5. Add friend 
----
-6. Make an Ad
-7. Post message
+1. List All Artists and Streams
+2. View Total Streamers
 
-Choose (1-7, 0 to quit): '''
+Choose (1-2, 0 to quit): '''
 
     try:
         choice = int(input( menu ))
@@ -52,7 +50,7 @@ Choose (1-7, 0 to quit): '''
             print('Done.')
             cur.close()
             conn.close()
-        elif choice in range(1,1+7):
+        elif choice in range(1, 1+2):
             print()
             actions[choice]()
             show_menu()
@@ -66,201 +64,98 @@ Choose (1-7, 0 to quit): '''
             conn.close() 
     
 #------------------------------------------------------------
-# list_users
+# list_artists_and_streams
 #------------------------------------------------------------
 
-def list_users_menu():
-    heading('List Users:')
-    list_users()
+def list_artists_and_streams_menu():
+    heading('List Artists and Streams:')
+    list_artists_and_streams()
 
-def list_users():
-    tmpl = '''
+def list_artists_and_streams():
+    tmpl1 = '''
         SELECT *
-          FROM Users as u
-         ORDER BY username
+          FROM Artists as s
+         ORDER BY artist_id DESC
     '''
-    cur.execute(tmpl)
+    cur.execute(tmpl1)
     rows = cur.fetchall()
-    table = PrettyTable(['uid',;'username', 'email', 'country', 'fname', 'lname', 'join_date'])
+    table1 = PrettyTable(['artist_id','artist_name','monthly_listeners'])
+    for row in rows:
+        table1.add_row(row)
+    print(table1)
+
+    tmpl2 = '''
+        SELECT *
+          FROM Stream as s
+         ORDER BY stream_id DESC
+    '''
+    cur.execute(tmpl2)
+    rows = cur.fetchall()
+    table2 = PrettyTable(['stream_id','uid','song_id', 'date', 'time'])
+    for row in rows:
+        table2.add_row(row)
+    print(table2)
+
+
+
+
+#-----------------------------------------------------------------
+# new_song
+#-----------------------------------------------------------------
+
+def view_streamers_menu():
+    heading('''
+            view_streamers: this query will add in a new song: "Vibes for Quarantine"
+
+            we will be inserting it into the Songs table, and print the table with the most recent 
+            entry on top ("High Hopes" before the query and "Vibes for Quarantine" after)
+
+            we have hard coded these values:
+            
+                song_name = "Vibes for Quarantine"
+                release_date = "2020-04-04"
+                genre = "Chill"
+                num_plays = "100000"
+                duration = "0:02:10"
+                artist_id = 2
+    ''')
+    song_name = "Vibes for Quarantine"
+    release_date = "2020-04-04"
+    genre = "Chill"
+    num_plays = "100000"
+    duration = "0:02:10"
+    artist_id = 2
+    
+    view_streamers(artist_id = artist_id)
+
+def view_streamers(artist_id):
+    tmpl = '''
+        SELECT a.artist_id, a.artist_name, so.song_id, so.song_name, COUNT(st.song_id)
+          FROM Artists as a
+          JOIN Songs as so 
+               ON a.artist_id = so.artist_id
+          JOIN Stream as st
+               ON so.song_id = st.song_id
+         WHERE (a.artist_id = %s)
+         GROUP BY a.artist_id, so.song_id
+         
+    '''
+    cmd = cur.mogrify(tmpl, (artist_id,))
+    print_cmd(cmd)
+    cur.execute(cmd)
+    
+    rows = cur.fetchall()
+    table = PrettyTable(['artist_id', 'artist_name', 'song_id', 'song_name', 'stream_count'])
     for row in rows:
         table.add_row(row)
     print(table)
-
-
-#-----------------------------------------------------------------
-# show_user
-#-----------------------------------------------------------------
-
-def show_user_menu():
-    heading("Show User(s):")
-    name = input('User name: ')
-    show_user(name)
     
-def show_user(name):
-    tmpl = '''
-        SELECT *
-          FROM Users as u
-         -- ILIKE is a case insensitive LIKE
-         WHERE (username = %s );
-    '''
-    cmd = cur.mogrify(tmpl, ('%'+name+'%', '%'+name+'%'))
-    print_cmd(cmd)
-    cur.execute(cmd)
-    rows = cur.fetchall()
-    print_rows(rows)
-    print()
-    for row in rows:
-        username, email, country, fname, lname, join_date, friend_username = row
-        print("%s. %s, %s, %s, %s, %s (%s)" % (username, email, country, fname, lname, join_date, friend_username))
 
-
-def show_user_by_id(id):
-    pass
-
-#-----------------------------------------------------------------
-# new_user
-#-----------------------------------------------------------------
-
-def new_user_menu():
-    heading("new_user")
-    username = input('Username: ')
-    email = input('Email: ')
-    country = input('Country: ')
-    fname = input('First name: ')
-    lname = input('Last name: ')
-    join_date = input('Date Joined: ')
-    
-    new_user(username=username, email=email, country=country, first_name=fname, last_name=lname, join_date=join_date)
-
-def new_user(username, email, country, first_name, last_name, join_date):
-    tmpl = '''
-        INSERT INTO Users (username, email, country, fname, lname, join_date) VALUES (%s, %s, %s, %s, %s, %s)
-    '''
-    cmd = cur.mogrify(tmpl, (username, email, country, first_name, last_name, join_date))
-    print_cmd(cmd)
-    cur.execute(cmd)
-    list_users()
-    
-#-----------------------------------------------------------------
-# show_friends
-#-----------------------------------------------------------------
-
-def show_friends_menu():
-    heading("Show friends")    
-    uid = input("User id: ")
-    show_friends(uid)
-
-def show_friends(uid):
-    tmpl = '''
-        SELECT s.username, s.fname, s.lname
-          FROM Friends as f
-          JOIN Users as s
-            ON s.uid = f.uid2
-         WHERE f.uid1 = %s
-    '''
-    cmd = cur.mogrify(tmpl, (uid, ))
-    print_cmd(cmd)
-    cur.execute(cmd)
-    rows = cur.fetchall()
-    print_rows(rows)
-    print()
-
-#-----------------------------------------------------------------
-# add_friend
-#-----------------------------------------------------------------
-
-def add_friend_menu():
-    print("add_friend")
-    userID = input("User ID: ")
-    friend_userID = input("Friend's User ID: ")
-    simultaneous_play = input("Play Music Together? (True/False): ")
-    add_friend(userID, friend_userID, simultaneous_play)
-
-def add_friend(userID, friend_userID, simultaneous_play):
-    tmpl = '''
-        INSERT INTO Friends (uid1, uid2, simultaneous_play) VALUES (%s, %s, %s)
-    '''
-    cmd = cur.mogrify(tmpl, (userID, friend_userID, simultaneous_play))
-    print_cmd(cmd)
-    cur.execute(cmd)
-    cmd = cur.mogrify(tmpl, (friend_userID, userID, simultaneous_play))
-    print_cmd(cmd)
-    cur.execute(cmd)
-    show_friends(userID)
-    show_friends(friend_userID)
-    
-#-----------------------------------------------------------------
-# show messages
-#-----------------------------------------------------------------
-
-def show_messages_menu():
-    heading("show_messages")
-    uid = input("User id: ")
-    show_messages(uid)
-
-def show_messages(uid):
-    tmpl = '''
-        SELECT m.message
-          FROM Messages as m
-          JOIN Users as u
-            ON m.posted_by = u.uid
-         WHERE %s = m.posted_to
-    '''
-    cmd = cur.mogrify(tmpl, (uid, ))
-    print_cmd(cmd)
-    cur.execute(cmd)
-    rows = cur.fetchall()
-    print_rows(rows)
-    print()
-
-#-----------------------------------------------------------------
-# create ad
-#-----------------------------------------------------------------
-    
-def make_ad_menu():
-     heading("make_ad")
-     duration = input("Ad Duration: ")
-     frequency = input("Ad Frequency: ")
-     ad_message = input("Ad Message: ")
-     cost = input("Ad Cost: ")
-     sponsorID = input("Sponsor ID: ")
-     make_ad(duration, frequency, ad_message, cost, sponsorID)
-
-def make_ad(duration, frequency, ad_message, cost, sponsorID):
-    tmpl = '''INSERT INTO Ads (duration, frequency, information, cost, sponsor_id) VALUES (%s, %s, %s, %s, %s)'''
-    cmd = cur.mogrify(tmpl, (duration, frequency, ad_message, cost, sponsorID))
-    print_cmd(cmd)
-    cur.execute(cmd)
-    rows = cur.fetchall()
-    print_rows(rows)
-    print()
-    
-#-----------------------------------------------------------------
-# post message
-#-----------------------------------------------------------------
-
-def post_message_menu():
-    heading("post_message")
-    posted_by = input('Posted by: ')
-    posted_to = input("Posted to: ")
-    message = input('Message: ')
-    post_message(posted_by=posted_by, posted_to=posted_to, message=message)
-
-def post_message(posted_by, posted_to, message):
-    tmpl = '''
-        INSERT INTO Messages (posted_by, posted_to, message) VALUES (%s, %s, %s)
-    '''
-    cmd = cur.mogrify(tmpl, (posted_by, posted_to, message))
-    print_cmd(cmd)
-    cur.execute(cmd)
-    show_messages(posted_by)
     
 # We leverage the fact that in Python functions are first class
 # objects and build a dictionary of functions numerically indexed 
 
-actions = { 1:list_users_menu,    2:show_user_menu,   3:new_user_menu,
-            4:show_friends_menu,  5:add_friend_menu,
-            6:make_ad_menu, 7:post_message_menu }
+actions = { 1:list_artists_and_streams_menu,    2:view_streamers_menu }
 
 
 if __name__ == '__main__':
