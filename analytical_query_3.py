@@ -26,18 +26,15 @@ def print_rows(rows):
 
 def show_menu():
     menu = '''
-    This is Complex Query 4
-
-    User Story 11: 
-        As a sponsor, I want to find out how much my ads
-        have cost me
 
 --------------------------------------------------
-1. List all Ads
-2. Find ad cost
+1. List users 
+---
+2. Stream Song
+3. List all Streams
+4. Count the Plays a User has Played a Song
 
-
-Choose (1-2, 0 to quit): '''
+Choose (1-4, 0 to quit): '''
 
     try:
         choice = int(input( menu ))
@@ -49,7 +46,7 @@ Choose (1-2, 0 to quit): '''
             print('Done.')
             cur.close()
             conn.close()
-        elif choice in range(1,1+2):
+        elif choice in range(1,1+4):
             print()
             actions[choice]()
             show_menu()
@@ -61,57 +58,93 @@ Choose (1-2, 0 to quit): '''
             cur.close() 
         if conn != None:
             conn.close() 
+    
+#------------------------------------------------------------
+# list_users
+#------------------------------------------------------------
 
-#-----------------------------------------------------------------
-# show ad
-#----------------------------------------------------------------- 
+def list_users_menu():
+    heading('List Users:')
+    list_users()
 
-def list_ads_menu():
-    heading("Shows all ads made")
-    list_ads()
-
-def list_ads():
+def list_users():
     tmpl = '''
         SELECT *
-          FROM Ads
-         ORDER BY ad_id DESC
+          FROM Users as u
+         ORDER BY uid DESC
     '''
     cur.execute(tmpl)
     rows = cur.fetchall()
-    table = PrettyTable(['ad_id', 'duration', 'frequency', 'information', 'cost', 'sponsor_id'])
+    table = PrettyTable(['uid', 'username', 'email', 'country', 'fname', 'lname', 'join_date'])
     for row in rows:
         table.add_row(row)
     print(table)
 
 #-----------------------------------------------------------------
-# find ad cost
+# play song
 #----------------------------------------------------------------- 
 
-def find_ad_cost_menu():
-    heading("Finds the cost of an ad")
-    adID = "1"
-    sponsorID = "6"
-    print('Ad ID: ' + adID)
-    print("Sponsor ID: " + sponsorID)
-    find_ad_cost(adID, sponsorID)
+def play_song_menu():
+    heading("play a song")
+    uid = "12"
+    song_id = "4"
+    date = "2020-12-04"
+    time = "01:15:12"
+    play_song(uid, song_id, date, time)
 
-def find_ad_cost(adID, sponsorID):
+def play_song(uid, song_id, date, time):
+    tmpl = '''INSERT INTO Stream (uid, song_id, date, time) VALUES (%s, %s, %s, %s)'''
+    cmd = cur.mogrify(tmpl, (uid, song_id, date, time))
+    print_cmd(cmd)
+    cur.execute(cmd)
+    list_streams()
+
+def list_streams_menu():
+    heading("Shows all streams")
+    list_streams()
+
+def list_streams():
     tmpl = '''
-        SELECT cost
-          FROM Ads
-         WHERE (ad_id = %s) and (sponsor_id = %s)
+        SELECT *
+          FROM Stream
+         ORDER BY stream_id DESC
     '''
-    cmd = cur.mogrify(tmpl, (adID, sponsorID))
+    cur.execute(tmpl)
+    rows = cur.fetchall()
+    table = PrettyTable(['stream_id', 'uid', 'song_id', 'date', 'time'])
+    for row in rows:
+        table.add_row(row)
+    print(table)
+
+#-----------------------------------------------------------------
+# count plays
+#----------------------------------------------------------------- 
+
+def count_plays_menu():
+    heading('Counts how many times a song has been played')
+    uid = "1"
+    song_id = "5"
+    print("User ID: " + uid)
+    print("Song ID: " + song_id)
+    count_plays(uid, song_id)
+
+def count_plays(uid, song_id):
+    tmpl = '''SELECT count(song_id)
+                FROM Stream
+               WHERE (uid = %s) and (song_id = %s)'''
+    cmd = cur.mogrify(tmpl, (uid, song_id))
     print_cmd(cmd)
     cur.execute(cmd)
     rows = cur.fetchall()
-    table = PrettyTable(['cost'])
+    table = PrettyTable(['song_id'])
     for row in rows:
         table.add_row(row)
     print(table)
 
 
-actions = { 1:list_ads_menu, 2:find_ad_cost_menu}
+
+actions = { 1:list_users_menu,  2:play_song_menu, 
+            3:list_streams_menu, 4:count_plays_menu }
 
 
 if __name__ == '__main__':
