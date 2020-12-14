@@ -102,7 +102,8 @@ def list_artists_and_streams():
 
 def view_streamers_menu():
     heading('''
-            view_streamers: this query will display the streams per song for artist_id 2, of Justhis.
+            view_streamers: this query will display the streams per song for artist_id 2, of Justhis 
+            by joining the Artists, Songs, and Stream tables. 
     ''')
     
     artist_id = 2

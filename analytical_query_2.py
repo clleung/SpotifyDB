@@ -107,6 +107,7 @@ def list_artists_and_songs():
 def view_songs_menu():
     heading('''
             view_songs: this query will display the songs that artist_id 2, or Justhis has posted
+            by joining the Artists and Songs table
 
     ''')
     

@@ -106,7 +106,8 @@ def list_artists_and_songs():
 
 def get_song_and_creator_info_menu():
     heading('''
-            get_song_and_creator_info: this query find the song and artist information for song_id 4, of Viva la Vida (by Coldplay)
+            get_song_and_creator_info: this query will find the song and artist information for song_id 4, of Viva la Vida (by Coldplay)
+            by joining the Songs and Artists tables
     ''')
     
     song_id = 4
