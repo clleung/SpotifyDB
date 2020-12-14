@@ -79,7 +79,7 @@ def list_songs():
     '''
     cur.execute(tmpl)
     rows = cur.fetchall()
-    table = PrettyTable(['song_id','song_name','release_date','genre','num_plays','duration','artist_id'])
+    table = PrettyTable(['song_id','song_name','release_date','genre','duration','artist_id'])
     for row in rows:
         table.add_row(row)
     print(table)
@@ -101,25 +101,23 @@ def new_song_menu():
                 song_name = "Vibes for Quarantine"
                 release_date = "2020-04-04"
                 genre = "Chill"
-                num_plays = "100000"
                 duration = "0:02:10"
                 artist_id = 2
     ''')
     song_name = "Vibes for Quarantine"
     release_date = "2020-04-04"
     genre = "Chill"
-    num_plays = "100000"
     duration = "0:02:10"
     artist_id = 2
     
-    new_song(song_name = song_name, release_date = release_date, genre = genre, num_plays = num_plays, duration = duration, artist_id = artist_id)
+    new_song(song_name = song_name, release_date = release_date, genre = genre, duration = duration, artist_id = artist_id)
 
-def new_song(song_name, release_date, genre, num_plays, duration, artist_id):
+def new_song(song_name, release_date, genre, duration, artist_id):
     tmpl = '''
-        INSERT INTO Songs (song_name, release_date, genre, num_plays, duration, artist_id)
+        INSERT INTO Songs (song_name, release_date, genre, duration, artist_id)
         VALUES (%s, %s, %s, %s, %s, %s)
     '''
-    cmd = cur.mogrify(tmpl, (song_name, release_date, genre, num_plays, duration, artist_id))
+    cmd = cur.mogrify(tmpl, (song_name, release_date, genre, duration, artist_id))
     print_cmd(cmd)
     cur.execute(cmd)
     print("note that Vibes for Quarantine is a new song in the table")

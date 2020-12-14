@@ -1,6 +1,5 @@
-
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2020-12-12 14:29:28.183
+-- Last modification date: 2020-12-14 00:59:58.28
 
 -- tables
 -- Table: Ads
@@ -51,7 +50,6 @@ CREATE TABLE Songs (
     song_name text  NOT NULL,
     release_date date  NOT NULL,
     genre text  NOT NULL,
-    num_plays int  NOT NULL,
     duration time  NOT NULL,
     artist_id int  NOT NULL,
     CONSTRAINT Songs_pk PRIMARY KEY (song_id)
@@ -177,5 +175,3 @@ ALTER TABLE Stream ADD CONSTRAINT Stream_Users
 
 -- End of file.
 
-
---Use SERIAL to allocate ids

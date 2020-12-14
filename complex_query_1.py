@@ -92,7 +92,7 @@ def list_artists_and_songs():
     '''
     cur.execute(tmpl2)
     rows = cur.fetchall()
-    table2 = PrettyTable(['song_id', 'song_name','release_date','genre', 'num_plays', 'duration', 'artist_id'])
+    table2 = PrettyTable(['song_id', 'song_name','release_date','genre', 'duration', 'artist_id'])
     for row in rows:
         table2.add_row(row)
     print(table2)
@@ -114,7 +114,7 @@ def get_song_and_creator_info_menu():
 
 def get_song_and_creator_info(song_id):
     tmpl = '''
-        SELECT s.song_id, s.song_name, s.release_date, s.genre, s.num_plays, s.duration, s.artist_id, a.artist_name, a.monthly_listeners
+        SELECT s.song_id, s.song_name, s.release_date, s.genre, s.duration, s.artist_id, a.artist_name, a.monthly_listeners
           FROM Songs as s
           JOIN Artists as a 
                ON s.artist_id = a.artist_id
@@ -125,7 +125,7 @@ def get_song_and_creator_info(song_id):
     cur.execute(cmd)
 
     rows = cur.fetchall()
-    table = PrettyTable(['song_id', 'song_name','release_date','genre', 'num_plays', 'duration', 'artist_id', 'artist_name','monthly_listeners'])
+    table = PrettyTable(['song_id', 'song_name','release_date','genre', 'duration', 'artist_id', 'artist_name','monthly_listeners'])
     for row in rows:
         table.add_row(row)
     print(table)

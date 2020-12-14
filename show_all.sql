@@ -1,7 +1,7 @@
 \copy Users(username, email, country, fname, lname, join_date)     FROM 'Users.csv' csv header
 \copy Artists(artist_id, artist_name, monthly_listeners)     FROM 'Artists.csv' csv header
 \copy Sponsors(sponsor_id, sponsor_name)     FROM 'Sponsors.csv' csv header
-\copy Songs(song_name, release_date, genre, num_plays, duration, artist_id)     FROM 'Songs.csv' csv header
+\copy Songs(song_name, release_date, genre, duration, artist_id)     FROM 'Songs.csv' csv header
 
 \copy Ads(duration, frequency, information, cost, sponsor_id)     FROM 'Ads.csv' csv header
 \copy Artist_Ads(ad_id, artist_id, event_date)     FROM 'Artist_Ads.csv' csv header

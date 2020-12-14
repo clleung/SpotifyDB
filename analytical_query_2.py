@@ -92,7 +92,7 @@ def list_artists_and_songs():
     '''
     cur.execute(tmpl2)
     rows = cur.fetchall()
-    table2 = PrettyTable(['song_id', 'song_name','release_date','genre', 'num_plays', 'duration', 'artist_id'])
+    table2 = PrettyTable(['song_id', 'song_name','release_date','genre', 'duration', 'artist_id'])
     for row in rows:
         table2.add_row(row)
     print(table2)

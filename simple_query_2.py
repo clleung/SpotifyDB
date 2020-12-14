@@ -79,7 +79,7 @@ def list_songs_and_streams():
     '''
     cur.execute(tmpl)
     rows = cur.fetchall()
-    table = PrettyTable(['song_id','song_name','release_date','genre','num_plays','duration','artist_id'])
+    table = PrettyTable(['song_id','song_name','release_date','genre','duration','artist_id'])
     for row in rows:
         table.add_row(row)
     print(table)
