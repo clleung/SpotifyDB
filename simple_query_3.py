@@ -29,18 +29,16 @@ def show_menu():
     This is Simple Query 3
 
     User Story 6: 
-        As a listener, I want to find my friends on Spotify, so that I can 
+        As a listener, I want to friend my friends on Spotify, so that I can 
         listen to music with them
 
 --------------------------------------------------
 1. List users 
-2. New user 
----
-3. Show friends 
-4. Add friend 
-5. List all Friends
+2. Show friends 
+3. Add friend 
+4. List all Friends
 
-Choose (1-5, 0 to quit): '''
+Choose (1-4, 0 to quit): '''
 
     try:
         choice = int(input( menu ))
@@ -52,7 +50,7 @@ Choose (1-5, 0 to quit): '''
             print('Done.')
             cur.close()
             conn.close()
-        elif choice in range(1,1+5):
+        elif choice in range(1,1+4):
             print()
             actions[choice]()
             show_menu()
@@ -162,8 +160,7 @@ def add_friend(userID, friend_userID, simultaneous_play):
 # We leverage the fact that in Python functions are first class
 # objects and build a dictionary of functions numerically indexed 
 
-actions = { 1:list_users_menu,  2:new_user_menu,
-            3:show_friends_menu, 4:add_friend_menu, 5:list_friends_menu}
+actions = { 1:list_users_menu,  2:show_friends_menu, 3:add_friend_menu, 4:list_friends_menu}
 
 
 if __name__ == '__main__':

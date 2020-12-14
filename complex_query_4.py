@@ -89,26 +89,28 @@ def list_ads():
 
 def find_ad_cost_menu():
     heading("Finds the cost of an ad")
-    adID = "1"
     sponsorID = "6"
-    print('Ad ID: ' + adID)
-    print("Sponsor ID: " + sponsorID)
-    find_ad_cost(adID, sponsorID)
+    print('Sponsor ID: ' + sponsorID)
+    find_ad_cost(sponsorID)
 
-def find_ad_cost(adID, sponsorID):
+def find_ad_cost(sponsorID):
     tmpl = '''
-        SELECT cost
-          FROM Ads
-         WHERE (ad_id = %s) and (sponsor_id = %s)
+        SELECT s.sponsor_id, s.sponsor_name, a.ad_id, a.duration, a.frequency, a.information, a.cost
+          FROM Sponsors as s
+          JOIN Ads as a 
+               ON s.sponsor_id = a.sponsor_id
+         WHERE (s.sponsor_id = %s)
     '''
-    cmd = cur.mogrify(tmpl, (adID, sponsorID))
+    cmd = cur.mogrify(tmpl, (sponsorID, ))
     print_cmd(cmd)
     cur.execute(cmd)
+
     rows = cur.fetchall()
-    table = PrettyTable(['cost'])
+    table = PrettyTable(['sponsor_id', 'sponsor_name', 'ad_id', 'duration','frequency', 'information', 'cost'])
     for row in rows:
         table.add_row(row)
     print(table)
+
 
 
 actions = { 1:list_ads_menu, 2:find_ad_cost_menu}

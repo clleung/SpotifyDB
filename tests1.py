@@ -68,7 +68,7 @@ Choose (1-2, 0 to quit): '''
 #------------------------------------------------------------
 
 def list_songs_menu():
-    heading('List Songs:')
+    heading('List Songs and Streams:')
     list_songs()
 
 def list_songs():
@@ -114,13 +114,21 @@ def new_song_menu():
 
 def new_song(song_name, release_date, genre, duration, artist_id):
     tmpl = '''
-        INSERT INTO Songs (song_name, release_date, genre, duration, artist_id)
-        VALUES (%s, %s, %s, %s, %s)
+        INSERT INTO Songs(song_name, release_date, genre, duration, artist_id)
+        VALUES (%s, %s)
     '''
-    cmd = cur.mogrify(tmpl, (song_name, release_date, genre, duration, artist_id))
+    cmd = cur.mogrify(tmpl, (artist_id,))
     print_cmd(cmd)
     cur.execute(cmd)
-    print("note that Vibes for Quarantine is a new song in the table")
+
+    tmpl2 = '''
+        DELETE FROM Songs as s
+         WHERE (s.artist_id = %s)
+    '''
+    cmd2 = cur.mogrify(tmpl2, (artist_id,))
+    print_cmd(cmd2)
+    cur.execute(cmd2)
+    print("Note that This Ain't Real from the Songs Table and stream_id 5 (or song_id 1) have been deleted from the Stream Table")
     list_songs()
     
 
