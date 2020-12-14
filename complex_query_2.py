@@ -33,6 +33,9 @@ def show_menu():
     I can increase ny client base and have more people use my goods
     and services (external company)
 
+    This query lets us classify if an ad is an external ad
+    by having us insert the ad into the external ads table
+    using the ad_id
 --------------------------------------------------
 1. List users 
 ---
@@ -123,16 +126,13 @@ def show_ad(ad_id):
     tmpl = '''
         SELECT *
           FROM Ads
-         WHERE (ad_id = %s)
     '''
     cmd = cur.mogrify(tmpl, (ad_id))
     print_cmd(cmd)
     cur.execute(cmd)
     rows = cur.fetchall()
-    table = PrettyTable(['ad_id', 'duration', 'frequency', 'information', 'cost', 'sponsor_id'])
-    for row in rows:
-        table.add_row(row)
-    print(table)
+    print_rows(rows)
+    print()
 
 def list_ads_menu():
     heading("Shows all ads made")

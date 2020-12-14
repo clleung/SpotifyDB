@@ -26,6 +26,14 @@ def print_rows(rows):
 
 def show_menu():
     menu = '''
+    This is Analytical Query 3
+    
+    User Story 7:
+    As a listener, I want to find out how many times I’ve listened to a song
+    so that I can see what I’m doing with my time
+
+    This query gives us the count of how many times a certain user has played a certain
+    song
 
 --------------------------------------------------
 1. List users 
@@ -136,7 +144,7 @@ def count_plays(uid, song_id):
     print_cmd(cmd)
     cur.execute(cmd)
     rows = cur.fetchall()
-    table = PrettyTable(['count_plays'])
+    table = PrettyTable(['song_id'])
     for row in rows:
         table.add_row(row)
     print(table)

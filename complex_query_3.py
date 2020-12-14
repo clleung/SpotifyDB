@@ -33,6 +33,8 @@ def show_menu():
         so that they can get more followers (increasing followers and royalties) 
         and specifically reach out to their current followers
 
+    This query lets us classify which ad is an ad for an artist by inserting
+    an ad from the ads table into the artist ads table using ad_id
 
 --------------------------------------------------
 1. List artists

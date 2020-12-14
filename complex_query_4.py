@@ -32,6 +32,8 @@ def show_menu():
         As a sponsor, I want to find out how much my ads
         have cost me
 
+    This query will give the sponsor how much his ad costs given
+    his uid and the ad_id.
 --------------------------------------------------
 1. List all Ads
 2. Find ad cost
@@ -89,28 +91,26 @@ def list_ads():
 
 def find_ad_cost_menu():
     heading("Finds the cost of an ad")
+    adID = "1"
     sponsorID = "6"
-    print('Sponsor ID: ' + sponsorID)
-    find_ad_cost(sponsorID)
+    print('Ad ID: ' + adID)
+    print("Sponsor ID: " + sponsorID)
+    find_ad_cost(adID, sponsorID)
 
-def find_ad_cost(sponsorID):
+def find_ad_cost(adID, sponsorID):
     tmpl = '''
-        SELECT s.sponsor_id, s.sponsor_name, a.ad_id, a.duration, a.frequency, a.information, a.cost
-          FROM Sponsors as s
-          JOIN Ads as a 
-               ON s.sponsor_id = a.sponsor_id
-         WHERE (s.sponsor_id = %s)
+        SELECT cost
+          FROM Ads
+         WHERE (ad_id = %s) and (sponsor_id = %s)
     '''
-    cmd = cur.mogrify(tmpl, (sponsorID, ))
+    cmd = cur.mogrify(tmpl, (adID, sponsorID))
     print_cmd(cmd)
     cur.execute(cmd)
-
     rows = cur.fetchall()
-    table = PrettyTable(['sponsor_id', 'sponsor_name', 'ad_id', 'duration','frequency', 'information', 'cost'])
+    table = PrettyTable(['cost'])
     for row in rows:
         table.add_row(row)
     print(table)
-
 
 
 actions = { 1:list_ads_menu, 2:find_ad_cost_menu}

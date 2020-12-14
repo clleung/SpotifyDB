@@ -33,6 +33,9 @@ def show_menu():
     As a listener, I want to listen to songs simultaneously with my friends
     so that we can enjoy high-quality music at the same time regardless of distance
 
+    This query allows the user to add a new friend. When they become friends, they
+    add each other. This then inserts two new entries into the friends table (1 for
+    each person)
 
 --------------------------------------------------
 1. List users 
