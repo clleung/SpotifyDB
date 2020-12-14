@@ -35,8 +35,8 @@ As an Artist,
 I want to take down content
 so that I can post my content with a different company
 --------------------------------------------------
-1. List All Songs
-2. New Song
+1. List Songs and Streams
+2. Delete All Songs (and stream history as a result)
 
 Choose (1-2, 0 to quit): '''
 
@@ -103,7 +103,9 @@ def list_songs_and_streams():
 
 def delete_all_songs_menu():
     heading('''
-            delete_all_songs: this user story requires a deletion in the Stream and a deletion in the Songs tables,
+            delete_all_songs: this query will delete all songs under the provided artist_id 2, or Justhis
+            
+            this user story requires a deletion in the Stream and a deletion in the Songs tables,
             as song_id is used in both Stream and Songs and there cannot be any dangling references.
 
             if you run simple_query_1.py before this, both Vibes for Quarantine and That Ain't Real will be deleted

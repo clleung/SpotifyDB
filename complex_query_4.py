@@ -28,16 +28,15 @@ def print_rows(rows):
 
 def show_menu():
     menu = '''
-This is analytical_query_2
+This is complex_query_4
 
-User Story 3:
-As an Artist, 
-I want to see how many songs I have posted
-so that I know how much work I’ve committed to Spotify.
-
+User Story 11:
+As an Sponsor, 
+I want to find out how much my ads have cost me in the past
+so that I can budget accordingly and decide how I’ll advertise on Spotify in the future.
 --------------------------------------------------
-1. List Artists and Songs
-2. View Songs
+1. List Sponsors and Ads
+2. Get Song and Creator Info
 
 Choose (1-2, 0 to quit): '''
 
@@ -65,34 +64,35 @@ Choose (1-2, 0 to quit): '''
             conn.close() 
     
 #------------------------------------------------------------
-# list_artists_and_songs
+# list_sponsors_and_ads
 #------------------------------------------------------------
 
-def list_artists_and_songs_menu():
+def list_sponsors_and_ads_menu():
     heading('List Artists and Songs:')
-    list_artists_and_songs()
+    list_sponsors_and_ads()
 
-def list_artists_and_songs():
+def list_sponsors_and_ads():
+
     tmpl1 = '''
         SELECT *
-          FROM Artists as a
-         ORDER BY artist_id DESC
+          FROM Sponsors as s
+         ORDER BY sponsor_id DESC
     '''
     cur.execute(tmpl1)
     rows = cur.fetchall()
-    table1 = PrettyTable(['artist_id','artist_name','monthly_listeners'])
+    table1 = PrettyTable(['sponsor_id','sponsor_name'])
     for row in rows:
         table1.add_row(row)
     print(table1)
 
     tmpl2 = '''
         SELECT *
-          FROM Songs as s
-         ORDER BY song_id DESC
+          FROM Ads as a
+         ORDER BY ad_id DESC
     '''
     cur.execute(tmpl2)
     rows = cur.fetchall()
-    table2 = PrettyTable(['song_id', 'song_name','release_date','genre', 'num_plays', 'duration', 'artist_id'])
+    table2 = PrettyTable(['ad_id', 'duration', 'frequency', 'information', 'cost', 'sponsor_id'])
     for row in rows:
         table2.add_row(row)
     print(table2)
@@ -101,34 +101,31 @@ def list_artists_and_songs():
 
 
 #-----------------------------------------------------------------
-# view_songs
+# get_all_ad_costs
 #-----------------------------------------------------------------
 
-def view_songs_menu():
+def get_all_ad_costs_menu():
     heading('''
-            view_songs: this query will display the songs that artist_id 2, or Justhis has posted
-
+            get_all_ad_costs: this query will find all of the ads for sponsor_id 14, Wonderful Pistachios
     ''')
     
-    artist_id = 2
-    
-    view_songs(artist_id = artist_id)
+    sponsor_id = 14
+    get_all_ad_costs(sponsor_id = sponsor_id)
 
-def view_songs(artist_id):
+def get_all_ad_costs(sponsor_id):
     tmpl = '''
-        SELECT a.artist_id, a.artist_name, COUNT(so.artist_id)
-          FROM Artists as a
-          JOIN Songs as so 
-               ON a.artist_id = so.artist_id
-         WHERE (a.artist_id = %s)
-         GROUP BY a.artist_id
+        SELECT s.sponsor_id, s.sponsor_name, a.ad_id, a.duration, a.frequency, a.information, a.cost
+          FROM Sponsors as s
+          JOIN Ads as a 
+               ON s.sponsor_id = a.sponsor_id
+         WHERE (s.sponsor_id = %s)
     '''
-    cmd = cur.mogrify(tmpl, (artist_id,))
+    cmd = cur.mogrify(tmpl, (sponsor_id, ))
     print_cmd(cmd)
     cur.execute(cmd)
 
     rows = cur.fetchall()
-    table = PrettyTable(['artist_id', 'artist_name', 'song_count'])
+    table = PrettyTable(['sponsor_id', 'sponsor_name', 'ad_id', 'duration','frequency', 'information', 'cost'])
     for row in rows:
         table.add_row(row)
     print(table)
@@ -138,7 +135,7 @@ def view_songs(artist_id):
 # We leverage the fact that in Python functions are first class
 # objects and build a dictionary of functions numerically indexed 
 
-actions = { 1:list_artists_and_songs_menu,    2:view_songs_menu }
+actions = { 1:list_sponsors_and_ads_menu,    2:get_all_ad_costs_menu }
 
 
 if __name__ == '__main__':

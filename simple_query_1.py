@@ -35,7 +35,7 @@ As an Artist,
 I want to post songs 
 so that I can gain revenue and followers.
 --------------------------------------------------
-1. List All Songs
+1. List Songs
 2. New Song
 
 Choose (1-2, 0 to quit): '''

@@ -47,9 +47,9 @@ SELECT *
  \! echo "Stream Table, ordered by stream_id (ascending)";
 SELECT *
   FROM Stream
- ORDER BY ASC;
+ ORDER BY stream_idASC;
 
- \! echo "Full list of users and their friends, ordered by username (ascending)";
+ \! echo "User Table, ordered by uid";
 SELECT *
   FROM Users
  ORDER BY uid ASC;

@@ -35,8 +35,8 @@ As a Listener,
 I want to find out information about the song and content creator 
 so that I can listen to similar content in the genre and listen to more from the content creator.
 --------------------------------------------------
-1. List All Songs
-2. New Song
+1. List Artists and Songs
+2. Get Song and Creator Info
 
 Choose (1-2, 0 to quit): '''
 
