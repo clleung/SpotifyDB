@@ -144,7 +144,7 @@ def count_plays(uid, song_id):
     print_cmd(cmd)
     cur.execute(cmd)
     rows = cur.fetchall()
-    table = PrettyTable(['song_id'])
+    table = PrettyTable(['count_plays'])
     for row in rows:
         table.add_row(row)
     print(table)

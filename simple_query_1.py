@@ -68,7 +68,7 @@ Choose (1-2, 0 to quit): '''
 #------------------------------------------------------------
 
 def list_songs_menu():
-    heading('List Songs:')
+    heading('List Users:')
     list_songs()
 
 def list_songs():
@@ -115,7 +115,7 @@ def new_song_menu():
 def new_song(song_name, release_date, genre, duration, artist_id):
     tmpl = '''
         INSERT INTO Songs (song_name, release_date, genre, duration, artist_id)
-        VALUES (%s, %s, %s, %s, %s)
+        VALUES (%s, %s, %s, %s, %s, %s)
     '''
     cmd = cur.mogrify(tmpl, (song_name, release_date, genre, duration, artist_id))
     print_cmd(cmd)

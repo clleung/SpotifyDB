@@ -126,13 +126,16 @@ def show_ad(ad_id):
     tmpl = '''
         SELECT *
           FROM Ads
+         WHERE (ad_id = %s)
     '''
     cmd = cur.mogrify(tmpl, (ad_id))
     print_cmd(cmd)
     cur.execute(cmd)
     rows = cur.fetchall()
-    print_rows(rows)
-    print()
+    table = PrettyTable(['ad_id', 'duration', 'frequency', 'information', 'cost', 'sponsor_id'])
+    for row in rows:
+        table.add_row(row)
+    print(table)
 
 def list_ads_menu():
     heading("Shows all ads made")
